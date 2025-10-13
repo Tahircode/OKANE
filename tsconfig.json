@@ -1,0 +1,8 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+    "compilerOptions": {
+      "types": ["next-auth"]
+    },
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "packages/db/types"]
+  
+}
