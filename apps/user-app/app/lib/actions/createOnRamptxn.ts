@@ -1,7 +1,6 @@
 "use server"
 
 import prisma from "@repo/db/client";
-import { AuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 
@@ -28,6 +27,7 @@ export async function createOnRampTranctions(amount : number , provider : string
         }
     })
     return {
-        message : " OnRamp Transactions added"
+        message : " OnRamp Transactions added",
+        token : token
     }
 }
