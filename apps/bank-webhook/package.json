@@ -1,3 +1,4 @@
+
 {
   "name": "bank-webhook",
   "version": "1.0.0",
@@ -13,7 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.19.1"
+    "express": "^4.19.1",
+    "@repo/db": "*"
   },
   "devDependencies": {
     "typescript": "^5.6.3",
