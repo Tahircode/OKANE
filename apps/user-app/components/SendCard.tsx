@@ -4,11 +4,10 @@ import { p2pTransfer } from "../app/lib/actions/p2pTransfer";
 import {
   UserCircleIcon,
   PhoneIcon,
-  EnvelopeIcon,
+
   XMarkIcon,
   BanknotesIcon,
   ExclamationTriangleIcon,
-  CheckCircleIcon
 } from "@heroicons/react/24/outline";
 
 interface SendCardProps {

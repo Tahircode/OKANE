@@ -1,7 +1,6 @@
 import { getBalance, getOnRampTransactions } from "../addmoney/page";
+import db from "@repo/db/client"
 import { 
-  BanknotesIcon, 
-  LockClosedIcon, 
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
   ArrowUpCircleIcon,
@@ -11,12 +10,9 @@ import {
   SparklesIcon,
   LightBulbIcon,
   ClockIcon,
-  CheckCircleIcon,
-  XCircleIcon,
   CreditCardIcon,
   WalletIcon,
   BuildingLibraryIcon,
-  GlobeAltIcon,
   StarIcon,
   FireIcon
 } from "@heroicons/react/24/outline";
@@ -28,12 +24,12 @@ import { authOptions } from "../../lib/auth";
 // Function to fetch P2P transactions
 async function getP2PTransactions() {
   const session = await getServerSession(authOptions);
-  const userId = Number(session?.user?.id);
+  const userId = session?.user?.id;
   
   if (!userId) return [];
   
   // Get all P2P transfers where the user is either sender or receiver
-  const p2pTransfers = await prisma.p2pTransfer.findMany({
+  const p2pTransfers = await db.p2pTransfer.findMany({
     where: {
       OR: [
         { fromUserId: userId },

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 import Link from "next/link"
 
 const GoogleIcon = () => (
@@ -14,7 +15,7 @@ const GoogleIcon = () => (
   </svg>
 );
 
-export default function Signin() {
+ function Signin() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -168,4 +169,21 @@ export default function Signin() {
     </div>
   );
 
+}
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    </div>
+  );
+}
+export default function UpdateProfileFn() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <Signin />
+    </Suspense>
+  );
 }
