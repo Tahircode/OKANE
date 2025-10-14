@@ -1,13 +1,14 @@
+
 {
+  "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "node16",
     "outDir": "dist",
-    "rootDir": "src",
-    "strict": true,
+    "module": "ESNext", 
+    "target": "ESNext", 
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "moduleResolution": "node16",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
