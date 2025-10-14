@@ -4,7 +4,6 @@ import { Card } from "@repo/ui/card";
 import { Select } from "@repo/ui/select";
 import { useState, useEffect } from "react";
 import axios from 'axios'
-import { TextInput } from "@repo/ui/textinput";
 import { useRouter } from "next/navigation";
 import { createOnRampTranctions } from "../app/lib/actions/createOnRamptxn";
 import {
@@ -12,8 +11,6 @@ import {
     ExclamationTriangleIcon,
     BanknotesIcon,
     CheckCircleIcon,
-    ArrowPathIcon,
-    InformationCircleIcon
 } from "@heroicons/react/24/outline";
 
 const SUPPORTED_BANKS = [{
