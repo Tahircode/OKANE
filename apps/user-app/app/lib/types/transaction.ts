@@ -1,8 +1,8 @@
 // lib/types/transaction.ts
 export type Transaction = {
     id: string;
-    fromUser: string | null; // sender's email or number
-    toUser: string | null;   // receiver's email or number
+    fromUser: string | null; 
+    toUser: string | null;   
     amount: number;               // in rupees (normalized)
     timestamp: Date;
   };

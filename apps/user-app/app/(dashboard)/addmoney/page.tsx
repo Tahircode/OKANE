@@ -4,6 +4,7 @@ import { BalanceCard } from "../../../components/BalanceCard";
 import { OnRampTransactions } from "../../../components/OnRampTransaction";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
+import { OnRampTransaction } from "@prisma/client";
 import { BanknotesIcon, ArrowTrendingUpIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 
 export async function getBalance() {
@@ -30,7 +31,7 @@ export async function getOnRampTransactions() {
         },
         take: 10 // Limit to last 10 transactions
     });
-    return txns.map(t => ({
+    return txns.map((t: OnRampTransaction)  => ({
         time: t.startTime,
         amount: t.amount,
         status: t.status,
