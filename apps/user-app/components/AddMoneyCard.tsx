@@ -15,7 +15,7 @@ import {
 
 const SUPPORTED_BANKS = [{
     name: "HDFC Bank",
-    redirectUrl: "https://netbanking.hdfcbank.com",
+    redirectUrl: "https://okane-1.onrender.com/hdfcwebhook",
     logo: "🏦"
 }, {
     name: "Axis Bank",
