@@ -3,8 +3,6 @@ import { useState } from "react";
 import { 
   ClockIcon, 
   BellIcon, 
-  EnvelopeIcon,
-  SparklesIcon,
   ArrowPathIcon,
   CheckCircleIcon,
   LightBulbIcon,
@@ -12,8 +10,11 @@ import {
   PaperAirplaneIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
-export default function ComingSoonPage({ featureName }: { featureName?: string }) {
+export default function ComingSoonPage() {
+  const searchParams = useSearchParams();
+  const featureName = searchParams.get('feature');
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
