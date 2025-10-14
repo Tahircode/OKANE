@@ -1,17 +1,11 @@
 import express from 'express';
-import db from "@repo/db/client";
-import {Prisma } from '@prisma/client';
+import aksh from "@repo/db/client";
 import cors from 'cors' 
-
-
-// --- Environment Variables ---
-const PORT = process.env.PORT || 3004;
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
 
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ["FRONTEND_URL"], 
+  origin: ["http://localhost:3000" , "https://driftpro.vercel.app"], 
   methods: ["GET", "POST"],
   }
 ))
@@ -22,7 +16,7 @@ interface PaymentInfo {
 }
 
 app.get("/hdfcwebhook" ,async (req,res)=>{
-  res.status(200).send("HDFC Webhook is active and listening.");
+  res.send("HDFC PAGE Auto Verifiing payment is Upppp!!!")
 })
 
 app.post("/hdfcwebhook", async (req, res) => {
@@ -38,7 +32,7 @@ app.post("/hdfcwebhook", async (req, res) => {
       });
     }
 
-    const result = await db.$transaction(async (tx : Prisma.TransactionClient) => {
+    const result = await aksh.$transaction(async (tx : any ) => {
       // Check transaction status first
 
       const transaction = await tx.onRampTransaction.findFirst({
@@ -55,13 +49,15 @@ app.post("/hdfcwebhook", async (req, res) => {
 
       // Handle invalid transaction
       if (!transaction) {
-        console.warn(`Invalid webhook token received: ${paymentInfo.token}`);
         return { success: false, message: "Invalid Transaction" };
       }
 
+
+      // Handle already processed transaction
       if (transaction.status === "Success") {
         return { success: false, message: "Transaction already processed" };
       }
+
       // Update transaction status
       await tx.onRampTransaction.update({
         where: {
@@ -87,18 +83,25 @@ app.post("/hdfcwebhook", async (req, res) => {
       return { success: true, message: "Captured" };
     });
 
+    // Send response based on transaction result
     if (result.success) {
-      res.status(200).json({ message: result.message });
+      // res.redirect("http://localhost:3000")
+      res.json({
+        message: result.message,
+      });
     } else {
-      const statusCode = result.message.includes("already processed") ? 409 : 400;
-      res.status(statusCode).json({ message: result.message });
+      res.status(400).json({
+        message: result.message,
+      });
     }
   } catch (e) {
-    console.error("Webhook processing failed:", e);
-    res.status(500).json({ message: "Internal server error during webhook processing." });
+    console.error(e);
+    res.status(500).json({
+      error: e instanceof Error ? e.message : "Internal server error",
+    });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 HDFC Webhook server started on port ${PORT}`);
+app.listen(3004, () => {
+  console.log("Web Bank started on port 3004");
 });

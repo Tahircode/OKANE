@@ -1,20 +1,14 @@
-// In apps/bank-webhook/tsconfig.json
 {
+  "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "target": "es2017",
-    "module": "node16",
-    "lib": ["es2017"],
-    "strict": true,
+    "outDir": "dist",
+    "module": "ESNext", 
+    "target": "ESNext", 
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "moduleResolution": "node16", 
-    "paths": {
-      "@repo/db/*": ["../../packages/db/*"] 
-    }
+    "strict": true
   },
-  "include": ["src/**/*"],
-  // "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
