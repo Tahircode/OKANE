@@ -9,10 +9,6 @@ import { AppbarClient } from "../components/AppbarClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// export const metadata: Metadata = {
-//   title: "OKANE",
-//   description: "wallet app",
-// };
 export const metadata: Metadata = {
   title: {
     default: "OKANE", 
@@ -20,9 +16,13 @@ export const metadata: Metadata = {
   },
   description: "A modern wallet for seamless P2P transfers and bill payments.",
   icons: {
-    icon: "/favicon.ico",         
-    shortcut: "/favicon.ico",   
-    apple: "/favicon.ico",
+    icon: {
+      url: "/okane-logo.png",
+      sizes: "any",
+      type: "image/png",
+    },
+    shortcut: "/okane-logo.png",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "OKANE - Your Digital Wallet",
