@@ -117,7 +117,7 @@ export const AddMoney = () => {
             });
 
             // Notify the backend after the transaction token is received
-            await axios.post('http://localhost:3004/hdfcwebhook', {
+            await axios.post(redirectUrl!, {
                 token: `${d.token}`,
             });
             console.log("Webhook notification sent");
