@@ -20,9 +20,9 @@ export const metadata: Metadata = {
   },
   description: "A modern wallet for seamless P2P transfers and bill payments.",
   icons: {
-    icon: "/okane-logo.png", 
-    apple: "/okane-logo.png", 
-    shortcut: "/favicon.ico",
+    icon: "/favicon.ico",         
+    shortcut: "/favicon.ico",   
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "OKANE - Your Digital Wallet",
