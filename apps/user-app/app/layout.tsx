@@ -17,11 +17,11 @@ export const metadata: Metadata = {
   description: "A modern wallet for seamless P2P transfers and bill payments.",
   icons: {
     icon: {
-      url: "/okane-logo.png",
+      url: "/logo.png",
       sizes: "any",
       type: "image/png",
     },
-    shortcut: "/okane-logo.png",
+    shortcut: "/logo.png",
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
