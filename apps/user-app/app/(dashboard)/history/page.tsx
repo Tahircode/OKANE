@@ -13,6 +13,8 @@ import Link from "next/link";
 import prisma from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
+// import type { OnRampTransaction, p2pTransfer, OnRampStatus } from "@prisma/client";
+
 
 // Function to fetch P2P transactions
 async function getP2PTransactions() {
@@ -61,7 +63,7 @@ async function getAllTransactions() {
   // Transform onRamp transactions to match the format
   const formattedOnRamp = onRampTransactions.map(tx => ({
     id: `onramp-${tx.time.getTime()}`,
-    type: "ADDED",
+    type: "CREDIT",
     amount: tx.amount,
     timestamp: tx.time,
     status: tx.status,

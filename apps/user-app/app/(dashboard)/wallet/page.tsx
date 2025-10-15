@@ -17,9 +17,9 @@ import {
   FireIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import prisma from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
+
 
 // Function to fetch P2P transactions
 async function getP2PTransactions() {

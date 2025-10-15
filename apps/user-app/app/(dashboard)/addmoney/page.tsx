@@ -6,6 +6,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
 import { BanknotesIcon, ArrowTrendingUpIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 
+import type { OnRampTransaction } from "@prisma/client";
+
+
 export async function getBalance() {
    const session = await getServerSession(authOptions);
     const balance = await prisma.balance.findFirst({
@@ -30,7 +33,7 @@ export async function getOnRampTransactions() {
         },
         take: 10 // Limit to last 10 transactions
     });
-    return txns.map((t)  => ({
+    return txns.map((t : OnRampTransaction)  => ({
         time: t.startTime,
         amount: t.amount,
         status: t.status,
