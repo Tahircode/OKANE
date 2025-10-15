@@ -9,9 +9,36 @@ import { AppbarClient } from "../components/AppbarClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// export const metadata: Metadata = {
+//   title: "OKANE",
+//   description: "wallet app",
+// };
 export const metadata: Metadata = {
-  title: "Wallet",
-  description: "Simple wallet app",
+  title: {
+    default: "OKANE", 
+    template: "%s | OKANE", 
+  },
+  description: "A modern wallet for seamless P2P transfers and bill payments.",
+  icons: {
+    icon: "/okane-logo.png", 
+    apple: "/okane-logo.png", 
+    shortcut: "/favicon.ico",
+  },
+  openGraph: {
+    title: "OKANE - Your Digital Wallet",
+    description: "A modern wallet for seamless P2P transfers and bill payments.",
+    type: "website",
+    locale: "en_US",
+    url: "https://okane.vercel.app/", 
+    siteName: "OKANE",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OKANE - Your Digital Wallet",
+    description: "A modern wallet for seamless P2P transfers and bill payments.",
+  },
+
+  themeColor: "#4F46E5", 
 };
 
 export default function RootLayout({
