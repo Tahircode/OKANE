@@ -7,6 +7,9 @@ import { getContacts } from "../../lib/actions/getContacts";
 import type { User } from "../../lib/types/user";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
+import { useRouter } from "next/router";
+
+
 
 import {
   ArrowPathIcon,
@@ -19,6 +22,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 export default function P2PPage() {
+  const router = useRouter();
   const { data: session } = useSession();
   const [isSelecting, setIsSelecting] = useState(false);
   const [isTransferring, setIsTransferring] = useState(false);
@@ -115,7 +119,10 @@ export default function P2PPage() {
       return false;
     }
     if (!currentUser?.phone) {
-      showToast("You need to add your phone number to continue", "error");
+      showToast("Add phone Number to continue", "error");
+      setTimeout(() => {
+        router.push("/update-profile");
+      }, 310);
       return false;
     }
     return true;
@@ -335,66 +342,58 @@ export default function P2PPage() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                   {filteredUsers.map((user) => (
-                      // --- THIS IS THE UPDATED PART ---
-                      <div key={user.id} className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                        {/* Top section: User info */}
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center space-x-3 min-w-0 flex-1">
-                            <div className="flex-shrink-0">
-                              {user.image ? (
-                                <img
-                                  src={user.image}
-                                  alt={user.name || "User"}
-                                  className="h-10 w-10 rounded-full object-cover"
-                                />
-                              ) : (
-                                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100">
-                                  <UserCircleIcon className="h-6 w-6 text-indigo-600" />
-                                </div>
-                              )}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium text-gray-900 truncate">
-                                {user.name || `User ${user.phone?.slice(-4)}`}
-                              </p>
-                              <div className="flex items-center space-x-2 text-xs text-gray-500">
-                                {user.phone && (
-                                  <div className="flex items-center">
-                                    <PhoneIcon className="h-3 w-3 mr-1" />
-                                    <span>{user.phone}</span>
-                                  </div>
-                                )}
-                              {user.email && (
-                                  <div className="flex items-center">
-                                    <EnvelopeIcon className="h-3 w-3 mr-1" />
-                                    <span className="truncate max-w-[120px]">{user.email}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                    {filteredUsers.map((user) => (
+                      <div
+                      key={user.id}
+                      className={`flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors ${isTransferring ? 'opacity-50' : ''}`}
+                    >
+                      {/* Left content */}
+                      <div className="flex items-center space-x-3">
+                        <div className="flex-shrink-0">
+                          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100">
+                            <UserCircleIcon className="h-6 w-6 text-indigo-600" />
                           </div>
                         </div>
-                        <div className="flex justify-end">
-                          <button
-                            onClick={async () => {
-                              if (!session?.user) return;
-                              setIsSelecting(true);
-                              try {
-                                const ok = await phoneFn(user, session.user);
-                                if (!ok) return;
-                                setSelectedContact(user);
-                              } finally {
-                                setIsSelecting(false);
-                              }
-                            }}
-                            disabled={isSelecting || isTransferring}
-                            className="flex-shrink-0 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
-                          >
-                            {isSelecting ? "Selecting..." : isTransferring ? "Transfer in progress..." : "Send"}
-                          </button>
+                        <div className="flex flex-col"> {/* <-- Added flex-col here */}
+                          <p className="text-sm font-medium text-gray-900">
+                            {user.name || `User ${user.phone?.slice(-4)}`}
+                          </p>
+                          <div className="flex flex-wrap items-center space-x-2 text-xs text-gray-500">
+                            {user.phone && (
+                              <div className="flex items-center">
+                                <PhoneIcon className="h-3 w-3 mr-1" />
+                                <span>{user.phone}</span>
+                              </div>
+                            )}
+                            {user.email && (
+                              <div className="flex items-center">
+                                <EnvelopeIcon className="h-3 w-3 mr-1" />
+                                <span className="truncate max-w-[120px]">{user.email}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
+                    
+                      {/* Right button */}
+                      <button
+                        onClick={async () => {
+                          if (!session?.user) return;
+                          setIsSelecting(true);
+                          try {
+                            const ok = await phoneFn(user, session.user);
+                            if (!ok) return;
+                            setSelectedContact(user);
+                          } finally {
+                            setIsSelecting(false);
+                          }
+                        }}
+                        disabled={isSelecting || isTransferring}
+                        className="flex-shrink-0 min-w-[80px] bg-indigo-600 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                      >
+                        {isSelecting ? "Selecting..." : isTransferring ? "Transfer in progress..." : "Send"}
+                      </button>
+                    </div>                    
                     ))}
                   </div>
                 )}
@@ -423,7 +422,3 @@ export default function P2PPage() {
     </div>
   );
 }
-
-
-
-

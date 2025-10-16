@@ -74,8 +74,10 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
       bg-white/80 backdrop-blur-xl border border-white/30 shadow-xl transition-all duration-300"
     >
       {/* Logo */}
+      <Link href="/dashboard">
         <div className="flex items-center gap-2 cursor-pointer group">
           <div className="relative">
+            
             <span className="text-2xl md:text-3xl font-mono tracking-wide 
               bg-gradient-to-r from-green-600 to-emerald-400 text-transparent bg-clip-text 
               group-hover:from-green-700 group-hover:to-emerald-500 transition-all duration-300">
@@ -85,6 +87,7 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
           </div>
           <span className="text-2xl text-black group-hover:rotate-12 transition-transform duration-300">お金</span>
         </div>
+        </Link>
 
       {/* Right Section */}
       <div className="flex items-center gap-3 md:gap-4">
