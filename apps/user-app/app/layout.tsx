@@ -1,7 +1,5 @@
-
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import React from "react";
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "../provider";
 import { AppbarClient } from "../components/AppbarClient";
@@ -37,8 +35,9 @@ export const metadata: Metadata = {
     title: "OKANE - Your Digital Wallet",
     description: "A modern wallet for seamless P2P transfers and bill payments.",
   },
-
-  themeColor: "#4F46E5", 
+};
+export const viewport: Viewport = {
+  themeColor: "#4F46E5",
 };
 
 export default function RootLayout({

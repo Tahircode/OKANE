@@ -81,7 +81,7 @@ export default function SignUpPage() {
               id="name"
               name="name"
               type="text"
-              placeholder="md aakash"
+              placeholder="aakash"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
             />
@@ -96,7 +96,7 @@ export default function SignUpPage() {
               id="phone"
               name="phone"
               type="text"
-              placeholder="9103597816"
+              placeholder="9195937923"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
               aria-describedby={state.errors?.phone ? 'phone-error' : undefined}

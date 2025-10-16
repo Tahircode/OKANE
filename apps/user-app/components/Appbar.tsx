@@ -226,7 +226,7 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
 
                 {/* Menu Items */}
                 <div className="py-2">
-                  <Link href="/upcoming" className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                  <Link href="/update-profile" className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                     <UserCircleIcon className="h-5 w-5 text-gray-400" />
                     <span>Edit Profile</span>
                   </Link>

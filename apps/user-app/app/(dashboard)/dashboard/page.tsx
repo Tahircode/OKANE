@@ -2,17 +2,23 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  ArrowTrendingUpIcon,
+import { 
+  ArrowTrendingUpIcon, 
+
   BanknotesIcon,
   CreditCardIcon,
+
   SparklesIcon,
   FireIcon,
   ClockIcon,
+
+
   TicketIcon,
   AcademicCapIcon,
   GiftIcon,
+
   ArrowRightIcon,
+
   CheckCircleIcon,
   ExclamationTriangleIcon
 } from "@heroicons/react/24/outline";
@@ -25,7 +31,7 @@ export default function Dashboard() {
   useEffect(() => {
     setMounted(true);
     setCurrentTime(new Date());
-
+    
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -43,18 +49,18 @@ export default function Dashboard() {
   }, [currentTime]);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
+    return date.toLocaleTimeString("en-US", { 
+      hour: "2-digit", 
       minute: "2-digit",
-      hour12: true
+      hour12: true 
     });
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric"
+    return date.toLocaleDateString("en-US", { 
+      weekday: "short", 
+      month: "short", 
+      day: "numeric" 
     });
   };
 
@@ -78,7 +84,7 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-
+          
           {/* Loading skeleton for the rest of the content */}
           <div className="animate-pulse">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
@@ -117,7 +123,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div className="min-w-0 flex-1">
                 <p className="text-xs sm:text-sm text-blue-100 font-medium truncate">Wallet Balance</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">₹12,450.00</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">check wallet</p>
                 <div className="flex items-center mt-1 sm:mt-2">
                   <ArrowTrendingUpIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
                   <span className="text-xs sm:text-sm truncate">12% from last month</span>
@@ -133,7 +139,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div className="min-w-0 flex-1">
                 <p className="text-xs sm:text-sm text-green-100 font-medium truncate">Monthly Savings</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">₹3,250.00</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">comming soon</p>
                 <div className="flex items-center mt-1 sm:mt-2">
                   <ArrowTrendingUpIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
                   <span className="text-xs sm:text-sm truncate">8% from last month</span>
@@ -149,7 +155,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div className="min-w-0 flex-1">
                 <p className="text-xs sm:text-sm text-purple-100 font-medium truncate">Rewards Points</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">2,450</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">you will get rewarded</p>
                 <div className="flex items-center mt-1 sm:mt-2">
                   <SparklesIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
                   <span className="text-xs sm:text-sm truncate">Redeem now</span>
@@ -187,11 +193,11 @@ export default function Dashboard() {
               <ArrowRightIcon className="h-4 w-4 ml-1" />
             </Link>
           </div>
-
+          
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {[
               {
-                name: "Send Money",
+                name: "Send Money", 
                 href: "/p2p",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -201,7 +207,7 @@ export default function Dashboard() {
                 color: "bg-blue-100 text-blue-600 hover:bg-blue-200"
               },
               {
-                name: "Add Money",
+                name: "Add Money", 
                 href: "/addmoney",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -211,7 +217,7 @@ export default function Dashboard() {
                 color: "bg-green-100 text-green-600 hover:bg-green-200"
               },
               {
-                name: "History",
+                name: "History", 
                 href: "/history",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -221,7 +227,7 @@ export default function Dashboard() {
                 color: "bg-purple-100 text-purple-600 hover:bg-purple-200"
               },
               {
-                name: "Wallet",
+                name: "Wallet", 
                 href: "/wallet",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -252,11 +258,11 @@ export default function Dashboard() {
               2 bills due soon
             </span>
           </div>
-
+          
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {[
               {
-                name: "Electricity Bill",
+                name: "Electricity Bill", 
                 href: "/upcoming",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -267,7 +273,7 @@ export default function Dashboard() {
                 statusColor: "text-red-600 bg-red-100"
               },
               {
-                name: "LIC Insurance",
+                name: "LIC Insurance", 
                 href: "/upcoming",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -278,7 +284,7 @@ export default function Dashboard() {
                 statusColor: "text-yellow-600 bg-yellow-100"
               },
               {
-                name: "EMI / Loans",
+                name: "EMI / Loans", 
                 href: "/upcoming",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -289,7 +295,7 @@ export default function Dashboard() {
                 statusColor: "text-green-600 bg-green-100"
               },
               {
-                name: "View Products",
+                name: "View Products", 
                 href: "/upcoming",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -326,11 +332,11 @@ export default function Dashboard() {
               3 active bookings
             </span>
           </div>
-
+          
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {[
               {
-                name: "Flight Booking",
+                name: "Flight Booking", 
                 href: "/upcoming",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -340,7 +346,7 @@ export default function Dashboard() {
                 badge: "20% off"
               },
               {
-                name: "Cab Booking",
+                name: "Cab Booking", 
                 href: "/upcoming",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -350,7 +356,7 @@ export default function Dashboard() {
                 badge: "New"
               },
               {
-                name: "Food Orders",
+                name: "Food Orders", 
                 href: "/upcoming",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -360,7 +366,7 @@ export default function Dashboard() {
                 badge: "Free delivery"
               },
               {
-                name: "Shopping",
+                name: "Shopping", 
                 href: "/upcoming",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 sm:size-6">
@@ -398,7 +404,7 @@ export default function Dashboard() {
               Verified Student
             </span>
           </div>
-
+          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {[
               {
@@ -449,7 +455,7 @@ export default function Dashboard() {
               <span>Ends in 14:32:45</span>
             </div>
           </div>
-
+          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {[
               {

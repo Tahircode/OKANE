@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { AppbarClient } from "../../components/AppbarClient";
 
