@@ -7,7 +7,7 @@ import { getContacts } from "../../lib/actions/getContacts";
 import type { User } from "../../lib/types/user";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 
 
@@ -162,7 +162,7 @@ export default function P2PPage() {
   const usersWithEmails = contacts.filter(contact => contact.email).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative">
+    <div className="min-h-screen relative">
       {/* Full-screen overlay with sand clock during transfer */}
       {isTransferring && (
   <div className="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center backdrop-blur-sm">
@@ -343,57 +343,59 @@ export default function P2PPage() {
                 ) : (
                   <div className="space-y-3">
                     {filteredUsers.map((user) => (
-                      <div
-                      key={user.id}
-                      className={`flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors ${isTransferring ? 'opacity-50' : ''}`}
-                    >
-                      {/* Left content */}
-                      <div className="flex items-center space-x-3">
-                        <div className="flex-shrink-0">
-                          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100">
-                            <UserCircleIcon className="h-6 w-6 text-indigo-600" />
+                      <div key={user.id} className={`flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors ${isTransferring ? 'opacity-50' : ''}`}>
+                        <div className="flex items-center space-x-3">
+                          <div className="flex-shrink-0">
+                            <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100">
+                              <UserCircleIcon className="h-6 w-6 text-indigo-600" />
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">
+                              {user.name || `User ${user.phone?.slice(-4)}`}
+                            </p>
+                            <div className="flex items-center space-x-2 text-xs text-gray-500">
+                              {user.phone && (
+                                <div className="flex items-center">
+                                  <PhoneIcon className="h-3 w-3 mr-1" />
+                                  <span>{user.phone}</span>
+                                </div>
+                              )}
+                              {user.email && (
+                                <div className="flex items-center">
+                                  <EnvelopeIcon className="h-3 w-3 mr-1" />
+                                  <span className="truncate max-w-[120px]">{user.email}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <div className="flex flex-col"> {/* <-- Added flex-col here */}
-                          <p className="text-sm font-medium text-gray-900">
-                            {user.name || `User ${user.phone?.slice(-4)}`}
-                          </p>
-                          <div className="flex flex-wrap items-center space-x-2 text-xs text-gray-500">
-                            {user.phone && (
-                              <div className="flex items-center">
-                                <PhoneIcon className="h-3 w-3 mr-1" />
-                                <span>{user.phone}</span>
-                              </div>
-                            )}
-                            {user.email && (
-                              <div className="flex items-center">
-                                <EnvelopeIcon className="h-3 w-3 mr-1" />
-                                <span className="truncate max-w-[120px]">{user.email}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                        <button
+                          onClick={async () => {
+                            if (!session?.user) return;
+
+                            // 1. Set loading to true
+                            setIsSelecting(true);
+
+                            try {
+                              const ok = await phoneFn(user, session.user);
+                              if (!ok) return; // The toast is already shown by phoneFn
+
+                              setSelectedContact(user);
+                              // showToast(`Selected ${user.name || user.phone}`, "info");
+                            } finally {
+                              // 2. Set loading to false, regardless of outcome
+                              setIsSelecting(false);
+                            }
+                          }}
+                          // 3. Disable the button and change text while loading or transferring
+                          disabled={isSelecting || isTransferring}
+                          className="flex-shrink-0 bg-indigo-600 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                        >
+                          {/* 4. Show different text based on the loading state */}
+                          {isSelecting ? "Selecting..." : isTransferring ? "Transfer in progress..." : "Send"}
+                        </button>
                       </div>
-                    
-                      {/* Right button */}
-                      <button
-                        onClick={async () => {
-                          if (!session?.user) return;
-                          setIsSelecting(true);
-                          try {
-                            const ok = await phoneFn(user, session.user);
-                            if (!ok) return;
-                            setSelectedContact(user);
-                          } finally {
-                            setIsSelecting(false);
-                          }
-                        }}
-                        disabled={isSelecting || isTransferring}
-                        className="flex-shrink-0 min-w-[80px] bg-indigo-600 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
-                      >
-                        {isSelecting ? "Selecting..." : isTransferring ? "Transfer in progress..." : "Send"}
-                      </button>
-                    </div>                    
                     ))}
                   </div>
                 )}

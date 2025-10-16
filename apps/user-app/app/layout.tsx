@@ -1,12 +1,18 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
+
 import { Providers } from "../provider";
 import { AppbarClient } from "../components/AppbarClient";
 
-
-const inter = Inter({ subsets: ["latin"] });
-
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+});
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+});
 export const metadata: Metadata = {
   title: {
     default: "OKANE", 
@@ -47,14 +53,15 @@ export default function RootLayout({
 }): React.JSX.Element {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers>
-          <div className="min-w-screen min-h-screen bg-white">
-            <AppbarClient />
+      <Providers>
+      <body className={`${geistSans.variable} ${geistMono.variable}  min-h-screen`}>
+      <AppbarClient />
+          <main className="min-w-screen min-h-screen bg-white">
             {children}
-          </div>
-        </Providers>
+          </main>
+      
       </body>
+      </Providers>
     </html>
   );
 }

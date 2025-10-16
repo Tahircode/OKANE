@@ -1,13 +1,19 @@
 "use client";
 
-export default function Layout({
+import React from "react";
+
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
-}): React.ReactElement {
+}) {
+
+
   return (
-    <div  className="flex items-center">
-      {children}
+    <div className="flex flex-col items-center pt-28 px-4 ">
+      <div className="w-full max-w-5xl flex flex-col gap-6 ">
+        {children}
+      </div>
     </div>
   );
 }

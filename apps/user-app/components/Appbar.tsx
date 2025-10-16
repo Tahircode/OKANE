@@ -69,7 +69,7 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
   const needsEmail = isUserAuthenticated && !contactEmail;
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl 
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl 
       text-gray-900 rounded-2xl px-4 md:px-6 py-3 md:py-4 flex items-center justify-between z-50 
       bg-white/80 backdrop-blur-xl border border-white/30 shadow-xl transition-all duration-300"
     >

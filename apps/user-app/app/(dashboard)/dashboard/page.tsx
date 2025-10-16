@@ -4,21 +4,15 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   ArrowTrendingUpIcon, 
-
   BanknotesIcon,
   CreditCardIcon,
-
   SparklesIcon,
   FireIcon,
   ClockIcon,
-
-
   TicketIcon,
   AcademicCapIcon,
   GiftIcon,
-
   ArrowRightIcon,
-
   CheckCircleIcon,
   ExclamationTriangleIcon
 } from "@heroicons/react/24/outline";
@@ -67,7 +61,7 @@ export default function Dashboard() {
 
   if (!mounted || !currentTime) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div className="min-h-screen w-full flex flex-col items-center justify-start pt-24 pb-16 px-4 sm:px-8 ">
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
           {/* Header Section - Static version */}
           <div className="mb-6 sm:mb-8">
@@ -99,14 +93,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+    <div className="min-h-screen ">
+      <div className="w-full max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
             <div className="min-w-0 flex-1">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-1 sm:mb-2 truncate">
-                {greeting}, User!
+              <h1 className="text-2xl sm:text-2xl lg:text-3xl font-mono bg-clip-text  mb-1 sm:mb-2 truncate">
+                {greeting},User!
               </h1>
               <p className="text-sm sm:text-base text-gray-600">{formatDate(currentTime)}</p>
             </div>
@@ -139,7 +133,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between">
               <div className="min-w-0 flex-1">
                 <p className="text-xs sm:text-sm text-green-100 font-medium truncate">Monthly Savings</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">comming soon</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">coming soon</p>
                 <div className="flex items-center mt-1 sm:mt-2">
                   <ArrowTrendingUpIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
                   <span className="text-xs sm:text-sm truncate">8% from last month</span>
