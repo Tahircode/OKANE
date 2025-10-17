@@ -5,7 +5,7 @@ import cors from 'cors'
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:3001" , "https://okane-1.onrender.com"], 
+  origin: ["http://localhost:3001" , "https://okane.vercel.app"], 
   methods: ["GET", "POST"],
   }
 ))
