@@ -5,7 +5,7 @@ import cors from 'cors'
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:3001" , "https://driftpro.vercel.app"], 
+  origin: ["http://localhost:3001" , "https://okane-1.onrender.com"], 
   methods: ["GET", "POST"],
   }
 ))
@@ -18,7 +18,7 @@ interface PaymentInfo {
 app.get("/hdfcwebhook" ,async (req,res)=>{
   res.send("HDFC PAGE Auto Verifiing payment is Upppp!!!")
 })
-
+console.log("hereeeeee");
 app.post("/hdfcwebhook", async (req, res) => {
   try {
     const paymentInfo: PaymentInfo = {
