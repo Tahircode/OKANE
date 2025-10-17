@@ -18,7 +18,6 @@ interface PaymentInfo {
 app.get("/hdfcwebhook" ,async (req,res)=>{
   res.send("HDFC PAGE Auto Verifiing payment is Upppp!!!")
 })
-console.log("hereeeeee");
 app.post("/hdfcwebhook", async (req, res) => {
   try {
     const paymentInfo: PaymentInfo = {

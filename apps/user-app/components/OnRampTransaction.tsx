@@ -83,14 +83,14 @@ export const OnRampTransactions = ({
                             </div>
                             <div>
                                 <div className="flex items-center space-x-2">
-                                    <p className="text-sm font-medium text-gray-900">Money Added</p>
+                                    <p className="hidden sm:block text-sm font-medium text-gray-900">Money Added</p>
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(t.status)}`}>
                                         {getStatusIcon(t.status)}
                                         <span className="ml-1">{t.status}</span>
                                     </span>
                                 </div>
-                                <div className="flex items-center space-x-2 text-xs text-gray-500">
-                                    <span>{t.provider}</span>
+                                <div className="flex flex-col sm:flex-row items-center space-x-2 text-xs text-gray-500">
+                                    <span className="hidden sm:block">{t.provider}</span>
                                     <span>•</span>
                                     <span>{formatDate(t.time)}</span>
                                 </div>

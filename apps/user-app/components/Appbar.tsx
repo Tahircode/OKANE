@@ -95,7 +95,7 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
         <div className="flex items-center gap-2">
           {needsEmail && (
             <Link href="/update-profile?field=email">
-              <button className="flex items-center gap-2 px-3 py-2 text-xs font-medium 
+              <button className="hidden  sm:flex items-center gap-2 px-3 py-2 text-xs font-medium 
                 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg 
                 hover:from-blue-600 hover:to-indigo-600 transition-all shadow-md"
               >
@@ -107,7 +107,7 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
           
           {needsPhoneNumber && (
             <Link href="/update-profile?field=phone">
-              <button className="flex items-center gap-2 px-3 py-2 text-xs font-medium 
+              <button className="hidden sm:flex items-center gap-2 px-3 py-2 text-xs font-medium 
                 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg 
                 hover:from-amber-600 hover:to-orange-600 transition-all shadow-md"
               >
