@@ -1,11 +1,11 @@
 import express from 'express';
-import aksh from "@repo/db/client";
+import db from "@repo/db/client";
 import cors from 'cors' 
 
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:3000" , "https://driftpro.vercel.app"], 
+  origin: ["http://localhost:3001" , "https://driftpro.vercel.app"], 
   methods: ["GET", "POST"],
   }
 ))
@@ -32,7 +32,7 @@ app.post("/hdfcwebhook", async (req, res) => {
       });
     }
 
-    const result = await aksh.$transaction(async (tx : any ) => {
+    const result = await db.$transaction(async (tx : any ) => {
       // Check transaction status first
 
       const transaction = await tx.onRampTransaction.findFirst({

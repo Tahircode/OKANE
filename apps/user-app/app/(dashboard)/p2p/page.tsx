@@ -122,7 +122,7 @@ export default function P2PPage() {
       showToast("Add phone Number to continue", "error");
       setTimeout(() => {
         router.push("/update-profile");
-      }, 310);
+      }, 400);
       return false;
     }
     return true;
