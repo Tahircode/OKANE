@@ -21,10 +21,10 @@ export function AppbarClient() {
   const { data: session, status } = useSession();
 
 
-React.useEffect(() => {
-  console.log("Session status:", status);
-  console.log("Session object:", session);
-}, [status, session]);
+// React.useEffect(() => {
+//   console.log("Session status:", status);
+//   console.log("Session object:", session);
+// }, [status, session]);
 
   const router = useRouter();
   const [loading, setLoading] = useState(false); 

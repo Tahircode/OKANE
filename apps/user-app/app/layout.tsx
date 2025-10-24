@@ -59,7 +59,6 @@ export default function RootLayout({
           <main className="min-w-screen min-h-screen bg-white">
             {children}
           </main>
-      
       </body>
       </Providers>
     </html>

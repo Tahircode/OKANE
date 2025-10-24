@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { signIn } from "next-auth/react"
+import { signIn,signOut } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect } from "react"
 import { Suspense } from "react"
 import Link from "next/link"
 
@@ -26,6 +27,13 @@ const GoogleIcon = () => (
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(searchParams.get("error"));
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (error === "OAuthCallback") {
+      console.log("OAuth Callback error detected. Signing out stale session.");
+      signOut({ redirect: false }); // Sign out without redirecting to avoid loops
+    }
+  }, [error]);
 
   const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,11 +64,32 @@ const GoogleIcon = () => (
 
   };
 
-
+  const getErrorMessage = (error: string | null) => {
+    switch (error) {
+      case "OAuthCallback":
+        return "Could not sign you in with Google. Please try again or use a different account.";
+      case "CredentialsSignin":
+        return "Invalid phone number or password.";
+      case "AccessDenied":
+        return "Access denied. You do not have permission to sign in.";
+      default:
+        return "An error occurred during sign in. Please try again.";
+    }
+  };
+  
   const handleGoogleSignIn = () => {
     setLoading(true);
-    // OAuth flow: starts redirect immediately
-    signIn("google", { callbackUrl: "/dashboard" });
+    setError(null);
+    
+    // Store the callback URL in sessionStorage
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("oauth_callback_url", callbackUrl);
+    }
+    
+    // OAuth flow: redirect to our intermediate callback page
+    signIn("google", { 
+      callbackUrl: window.location.origin + "/auth/callback" 
+    });
   };
 
   return (
@@ -69,10 +98,10 @@ const GoogleIcon = () => (
         <h2 className="text-3xl font-extrabold text-center mb-6 text-gray-900">Sign In</h2>
 
         {error && (
-          <div className="mb-4 p-3 text-sm text-red-800 bg-red-100 rounded-lg text-center shadow-inner">
-            {error}
-          </div>
-        )}
+  <div className="mb-4 p-3 text-sm text-red-800 bg-red-100 rounded-lg text-center shadow-inner">
+    {getErrorMessage(error)}
+  </div>
+)}
 
         <div className="space-y-6">
           <button

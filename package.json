@@ -10,7 +10,8 @@
     "db:generate": "cd packages/db && npx prisma generate && cd ../..",
     "db:migrate": "prisma migrate dev --schema=packages/db/prisma/schema.prisma",
     "db:push": "prisma db push --schema=packages/db/prisma/schema.prisma",
-    "db:studio": "prisma studio --schema=packages/db/prisma/schema.prisma"
+    "db:studio": "prisma studio --schema=packages/db/prisma/schema.prisma",
+    "start-user-app": "cd ./apps/user-app && npm run start"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
@@ -48,5 +49,20 @@
     "react-router-dom": "^7.9.4",
     "serve-static": "^2.2.0",
     "utils-merge": "^1.0.1"
-  }
+  },
+  "version": "1.0.0",
+  "description": "This Turborepo starter is maintained by the Turborepo core team.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahircode/okane3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Tahircode/okane3/issues"
+  },
+  "homepage": "https://github.com/Tahircode/okane3#readme"
 }
