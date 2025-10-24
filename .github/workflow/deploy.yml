@@ -24,7 +24,7 @@ jobs:
         context: .
         file: docker/Dockerfile.user-app
         push: true
-        tags: tahirkhan01/okane:latest  
+        tags: tahirkhan01/okane:latest
 
     - name: Verify Pushed Image
-      run: docker pull tahirkhan01/okane:latest  
+      run: docker pull tahirkhan01/okane:latest
