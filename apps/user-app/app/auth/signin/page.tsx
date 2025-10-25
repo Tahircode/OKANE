@@ -70,6 +70,8 @@ const GoogleIcon = () => (
         return "Could not sign you in with Google. Please try again or use a different account.";
       case "CredentialsSignin":
         return "Invalid phone number or password.";
+        case "Timeout":
+          return "The sign-in process took too long. Please try again.";
       case "AccessDenied":
         return "Access denied. You do not have permission to sign in.";
       default:

@@ -1,8 +1,10 @@
 import AuthError from "../../../components/AuthError";
 import { Suspense } from "react";
+
  function ErrorPage() {
   return <AuthError />;
 }
+
 function LoadingFallback() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
