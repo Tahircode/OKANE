@@ -19,15 +19,15 @@ export const metadata: Metadata = {
     template: "%s | OKANE", 
   },
   description: "A modern wallet for seamless P2P transfers and bill payments.",
-  icons: {
-    icon: {
-      url: "/logo.png",
-      sizes: "any",
-      type: "image/png",
-    },
-    shortcut: "/logo.png",
-    apple: "/apple-touch-icon.png",
-  },
+  // icons: {
+  //   icon: {
+  //     url: "/logo.png",
+  //     sizes: "any",
+  //     type: "image/png",
+  //   },
+  //   shortcut: "/logo.png",
+  //   apple: "/apple-touch-icon.png",
+  // },
   openGraph: {
     title: "OKANE - Your Digital Wallet",
     description: "A modern wallet for seamless P2P transfers and bill payments.",

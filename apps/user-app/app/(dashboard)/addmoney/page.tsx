@@ -1,47 +1,20 @@
-import prisma from "@repo/db/client";
 import { AddMoney } from "../../../components/AddMoneyCard";
 import { BalanceCard } from "../../../components/BalanceCard";
-import { OnRampTransactions } from "../../../components/OnRampTransaction";
+import { OnRampTransactions} from "../../../components/OnRampTransaction";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
 import { BanknotesIcon, ArrowTrendingUpIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import { getBalance as getBalanceFromCache} from "@repo/db";
+import { getOnRampTransactions } from "../../lib/actions/getTransactions";
 
-import type { OnRampTransaction } from "@prisma/client";
-
-
-export async function getBalance() {
+async function getBalance() {
    const session = await getServerSession(authOptions);
-    const balance = await prisma.balance.findFirst({
-        where: {
-            userId: session?.user?.id
-        }
-    });
-    return {
-        amount: balance?.amount || 0,
-        locked: balance?.locked || 0
+    if(!session?.user?.id){
+        return {amount : 0, locked : 0}
     }
+    return await getBalanceFromCache(session.user.id);
 }
-
-export async function getOnRampTransactions() {
-    const session = await getServerSession(authOptions);
-    const txns = await prisma.onRampTransaction.findMany({
-        where: {
-            userId: session?.user?.id
-        },
-        orderBy: {
-            startTime: 'desc'
-        },
-        take: 10 // Limit to last 10 transactions
-    });
-    return txns.map((t : OnRampTransaction)  => ({
-        time: t.startTime,
-        amount: t.amount,
-        status: t.status,
-        provider: t.provider
-    }))
-}
-
-export default async function() {
+export default async function AddMoneyPage() {
     const balance = await getBalance();
     const transactions = await getOnRampTransactions();
 

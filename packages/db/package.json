@@ -1,23 +1,28 @@
 {
   "name": "@repo/db",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-     "generate": "prisma generate --schema=./prisma/schema.prisma",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "generate": "prisma generate --schema=./prisma/schema.prisma",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -b",
+    "clear-cache": "DOTENV_CONFIG_PATH=.env.local ts-node --esm /scripts/clearCache.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
-  "exports": {
-    "./client": "./index.ts"
-  },
   "dependencies": {
-    "@prisma/client": "^6.4.1",
-    "prisma": "^6.4.1"
+    "@auth/prisma-adapter": "^2.11.1",
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "pg": "^8.17.2",
+    "prisma": "^7.3.0",
+    "@upstash/redis": "^1.0.0",
+    "dotenv": "^16.0.0"
   },
   "prisma": {
-  "seed": "ts-node prisma/seed.ts"
-}
+    "seed": "ts-node prisma/seed.ts"
+  }
 }

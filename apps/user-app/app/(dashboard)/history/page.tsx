@@ -1,4 +1,5 @@
-import { getBalance, getOnRampTransactions } from "../addmoney/page";
+import { getBalance } from "@repo/db";
+import { getAllTransactions } from "../../lib/actions/getTransactions";
 import { 
   BanknotesIcon, 
   LockClosedIcon, 
@@ -10,88 +11,34 @@ import {
   XCircleIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import prisma from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../lib/auth";
-// import type { OnRampTransaction, p2pTransfer, OnRampStatus } from "@prisma/client";
 
+const formatDate = (date?: Date | string | null) => {
+  if (!date) return "—";
 
-// Function to fetch P2P transactions
-async function getP2PTransactions() {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
-  
-  if (!userId) return [];
-  
-  // Get all P2P transfers where the user is either sender or receiver
-  const p2pTransfers = await prisma.p2pTransfer.findMany({
-    where: {
-      OR: [
-        { fromUserId: userId },
-        { toUserId: userId }
-      ]
-    },
-    include: {
-      fromUser: { select: { name: true, email: true } },
-      toUser: { select: { name: true, email: true } }
-    },
-    orderBy: { timestamp: 'desc' }
-  });
-  
-  return p2pTransfers.map(transfer => {
-    const isSent = transfer.fromUserId === userId;
-    const otherUser = isSent ? transfer.toUser : transfer.fromUser;
-    
-    return {
-      id: transfer.id,
-      type: isSent ? "SENT" : "RECEIVED",
-      amount: transfer.amount,
-      timestamp: transfer.timestamp,
-      status: "Success", // P2P transfers are always successful if they exist
-      provider: otherUser?.name || otherUser?.email || "Unknown User",
-      fromUserId: transfer.fromUserId,
-      toUserId: transfer.toUserId
-    };
-  });
-}
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "—";
 
-// Function to fetch all transactions and merge them
-async function getAllTransactions() {
-  const onRampTransactions = await getOnRampTransactions();
-  const p2pTransactions = await getP2PTransactions();
-  
-  // Transform onRamp transactions to match the format
-  const formattedOnRamp = onRampTransactions.map(tx => ({
-    id: `onramp-${tx.time.getTime()}`,
-    type: "CREDIT",
-    amount: tx.amount,
-    timestamp: tx.time,
-    status: tx.status,
-    provider: tx.provider
-  }));
-  
-  // Merge all transactions
-  const allTransactions = [...formattedOnRamp, ...p2pTransactions];
-  
-  // Sort by timestamp (newest first)
-  return allTransactions.sort((a, b) => 
-    new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  );
-}
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-IN', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(date);
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d);
 };
 
-const formatTime = (date: Date) => {
+const formatTime = (date?: Date | string | null) => {
+    if (!date) return "—";
+
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "—";
+
   return new Intl.DateTimeFormat('en-IN', {
     hour: '2-digit',
     minute: '2-digit',
-  }).format(date);
+  }).format(d);
 };
 
 const getStatusIcon = (status: string) => {
@@ -172,16 +119,16 @@ const getAmountPrefix = (type: string) => {
 };
 
 export default async function DashboardCard() {
-  const balance = await getBalance();
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
+  const balance = await getBalance(userId);
   const transactions = await getAllTransactions();
 
   const totalBalance = (balance?.amount || 0) + (balance?.locked || 0);
-  const lockedPercentage = totalBalance > 0 ? ((balance?.locked || 0) / totalBalance) * 100 : 0;
 
   // Separate successful and processing transactions
-  const successfulTransactions = transactions.filter(t => t.status === "Success");
+  const successfulTransactions = transactions.filter(t => t.status ===  "Success");
   const processingTransactions = transactions.filter(t => t.status === "Processing");
-  const failedTransactions = transactions.filter(t => t.status === "Failure");
 
   // Calculate statistics based on successful transactions only
   const totalSent = successfulTransactions
@@ -257,7 +204,7 @@ export default async function DashboardCard() {
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Sent</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalSent.toFixed(2)}</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalSent}</p>
               </div>
             </div>
           </div>
@@ -269,7 +216,7 @@ export default async function DashboardCard() {
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Received</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalReceived.toFixed(2)}</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalReceived}</p>
               </div>
             </div>
           </div>
@@ -281,7 +228,7 @@ export default async function DashboardCard() {
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Added</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalAdded.toFixed(2)}</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalAdded}</p>
               </div>
             </div>
           </div>
@@ -294,7 +241,7 @@ export default async function DashboardCard() {
                 </div>
                 <div className="ml-3 sm:ml-4 min-w-0 flex-1">
                   <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Processing</p>
-                  <p className="text-lg sm:text-2xl font-bold text-yellow-600 truncate">₹{processingAmount.toFixed(2)}</p>
+                  <p className="text-lg sm:text-2xl font-bold text-yellow-600 truncate">₹{processingAmount}</p>
                   <p className="text-xs text-gray-500 mt-1 truncate">
                     {processingTransactions.length} transaction{processingTransactions.length > 1 ? 's' : ''}
                   </p>
@@ -323,7 +270,7 @@ export default async function DashboardCard() {
           <div className="p-4 sm:p-6">
             {transactions && transactions.length > 0 ? (
               <div className="space-y-3 sm:space-y-4">
-                {transactions.map((tx: any) => (
+                {transactions.map((tx) => (
                   <div 
                     key={tx.id} 
                     className={`flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 rounded-lg transition-colors ${
@@ -358,7 +305,8 @@ export default async function DashboardCard() {
                           )}
                         </div>
                         <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                          <span className="truncate">{tx.provider}</span>
+                          <span className="truncate">  {"provider" in tx ? tx.provider : "P2P"}
+</span>
                           <span>•</span>
                           <span>{formatDate(tx.timestamp)}</span>
                           <span>•</span>
@@ -372,7 +320,7 @@ export default async function DashboardCard() {
                           ? "text-yellow-600" 
                           : getAmountColor(tx.type)
                       }`}>
-                        {getAmountPrefix(tx.type)}₹{(tx.amount / 100).toFixed(2)}
+                        {getAmountPrefix(tx.type)}₹{Math.abs(tx.amount / 100).toFixed(2)}
                       </p>
                       {tx.status === "Processing" && (
                         <p className="text-xs text-yellow-600 mt-1">Awaiting confirmation</p>

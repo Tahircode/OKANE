@@ -4,8 +4,10 @@
     "plugins": [
       {
         "name": "next"
-      }
-    ]
+      },
+      
+    ],
+    "allowImportingTsExtensions": true,
   },
   "include": [
     "next-env.d.ts",
@@ -13,6 +15,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "../../packages/db/src/cache/histroyOnDemand.ts"  ],
   "exclude": ["node_modules"]
 }

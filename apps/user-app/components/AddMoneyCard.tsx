@@ -115,8 +115,7 @@ export const AddMoney = () => {
                 provider: provider,
                 token: d.token
             });
-
-            // Notify the backend after the transaction token is received
+            // Notify the webhook/backend after the transaction token is received
             await axios.post(redirectUrl!, {
                 token: `${d.token}`,
             });
@@ -146,7 +145,7 @@ export const AddMoney = () => {
     // Initialize the input with the amount value
     useEffect(() => {
         setAmountInput(amount);
-    }, []);
+    }, [amount]);
 
     // Format amount with rupee symbol
     const formatAmount = (value: string) => {
@@ -289,7 +288,7 @@ export const AddMoney = () => {
                             </div>
                         </div>
                         <p className="text-sm text-gray-500 mb-4 text-center">
-                            You will be redirected to your bank's secure payment gateway to complete this transaction.
+                            You will be redirected to your bank&apos;s secure payment gateway to complete this transaction.
                         </p>
                         <div className="flex space-x-3">
                             <button

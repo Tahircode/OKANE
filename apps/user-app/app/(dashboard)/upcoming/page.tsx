@@ -70,7 +70,7 @@ function ComingSoonContent() {
             {featureName ? `${featureName} is Coming Soon` : "New Features Coming Soon"}
           </h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            We're working hard to bring you exciting new features. Stay tuned for updates and be the first to know when they're available.
+             We&apos;re working hard to bring you exciting new features. Stay tuned for updates and be the first to know when they&apos;re available.
           </p>
         </div>
 
@@ -81,7 +81,7 @@ function ComingSoonContent() {
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-8">
               <div className="flex items-center mb-6">
                 <RocketLaunchIcon className="h-8 w-8 text-indigo-600 mr-3" />
-                <h2 className="text-2xl font-bold text-gray-900">What's Coming Next</h2>
+                <h2 className="text-2xl font-bold text-gray-900">What&apos;s Coming Next</h2>
               </div>
               
               <div className="space-y-6">
@@ -106,7 +106,7 @@ function ComingSoonContent() {
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
               <div className="flex items-center mb-6">
                 <LightBulbIcon className="h-8 w-8 text-yellow-500 mr-3" />
-                <h2 className="text-2xl font-bold text-gray-900">Why You'll Love These Features</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Why You&apos;ll Love These Features</h2>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -155,7 +155,7 @@ function ComingSoonContent() {
               </div>
               
               <p className="mb-6 text-indigo-100">
-                Be the first to know when these features are available. Enter your email below and we'll keep you updated.
+                Be the first to know when these features are available. Enter your email below and we&apos;ll keep you updated.
               </p>
               
               {!isSubmitted ? (
@@ -196,8 +196,8 @@ function ComingSoonContent() {
               ) : (
                 <div className="text-center py-6">
                   <CheckCircleIcon className="h-12 w-12 text-green-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">You're on the list!</h3>
-                  <p className="text-indigo-100">We'll notify you as soon as these features are available.</p>
+                  <h3 className="text-lg font-medium mb-2">You&apos;re on the list!</h3>
+                  <p className="text-indigo-100">We&apos;ll notify you as soon as these features are available.</p>
                 </div>
               )}
             </div>
@@ -263,7 +263,7 @@ function ComingSoonContent() {
         {/* Footer */}
         <div className="mt-12 text-center text-gray-500 text-sm">
           <p>© 2023 Your Wallet. All rights reserved.</p>
-          <p className="mt-2">We're constantly working to improve your experience. Stay tuned for more exciting features!</p>
+          <p className="mt-2">We&apos;re constantly working to improve your experience. Stay tuned for more exciting features!</p>
         </div>
       </div>
     </div>

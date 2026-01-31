@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 model User {
   id                String    @id @default(cuid())
@@ -40,6 +39,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
   @@map("accounts")
 }
 
@@ -51,6 +51,9 @@ model p2pTransfer {
   fromUser   User         @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
   toUserId   String
   toUser     User         @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
+  status     OnRampStatus
+  @@index([fromUserId])
+  @@index([toUserId])
 }
 
  
@@ -74,9 +77,10 @@ model OnRampTransaction {
   provider  String
   amount    Int
   type      TransactionType @default(CREDIT)  
-  startTime DateTime
+  timestamp DateTime
   userId    String
   user      User            @relation(fields: [userId], references: [id])
+  @@index([userId])
 }
 
 
@@ -98,3 +102,4 @@ enum OnRampStatus {
   Failure
   Processing
 }
+

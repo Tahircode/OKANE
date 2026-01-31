@@ -1,5 +1,7 @@
-import { getBalance, getOnRampTransactions } from "../addmoney/page";
-import db from "@repo/db/client"
+import { getBalance } from "@repo/db";
+import { getAllTransactions } from "../../lib/actions/getTransactions";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../lib/auth";
 import { 
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
@@ -17,87 +19,6 @@ import {
   FireIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../lib/auth";
-
-
-// Function to fetch P2P transactions
-async function getP2PTransactions() {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
-  
-  if (!userId) return [];
-  
-  // Get all P2P transfers where the user is either sender or receiver
-  const p2pTransfers = await db.p2pTransfer.findMany({
-    where: {
-      OR: [
-        { fromUserId: userId },
-        { toUserId: userId }
-      ]
-    },
-    include: {
-      fromUser: { select: { name: true, email: true } },
-      toUser: { select: { name: true, email: true } }
-    },
-    orderBy: { timestamp: 'desc' }
-  });
-  
-  return p2pTransfers.map(transfer => {
-    const isSent = transfer.fromUserId === userId;
-    const otherUser = isSent ? transfer.toUser : transfer.fromUser;
-    
-    return {
-      id: transfer.id,
-      type: isSent ? "SENT" : "RECEIVED",
-      amount: transfer.amount,
-      timestamp: transfer.timestamp,
-      status: "Success", // P2P transfers are always successful if they exist
-      provider: otherUser?.name || otherUser?.email || "Unknown User",
-      fromUserId: transfer.fromUserId,
-      toUserId: transfer.toUserId
-    };
-  });
-}
-
-// Function to fetch all transactions and merge them
-async function getAllTransactions() {
-  const onRampTransactions = await getOnRampTransactions();
-  const p2pTransactions = await getP2PTransactions();
-  
-  // Transform onRamp transactions to match the format
-  const formattedOnRamp = onRampTransactions.map(tx => ({
-    id: `onramp-${tx.time.getTime()}`,
-    type: "ADDED",
-    amount: tx.amount,
-    timestamp: tx.time,
-    status: tx.status,
-    provider: tx.provider
-  }));
-  
-  // Merge all transactions
-  const allTransactions = [...formattedOnRamp, ...p2pTransactions];
-  
-  // Sort by timestamp (newest first)
-  return allTransactions.sort((a, b) => 
-    new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  );
-}
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-IN', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(date);
-};
-
-const formatTime = (date: Date) => {
-  return new Intl.DateTimeFormat('en-IN', {
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
-};
 
 // Investment options data
 const investmentOptions = [
@@ -164,16 +85,15 @@ const growthSuggestions = [
   }
 ];
 
-export default async function Wallet() {
-  const balance = await getBalance();
+  export default async function Wallet() {
+  const session = await getServerSession(authOptions);
+  const balance = await getBalance(session?.user?.id);
   const transactions = await getAllTransactions();
 
   const totalBalance = (balance?.amount || 0) + (balance?.locked || 0);
 
   // Separate successful and processing transactions
   const successfulTransactions = transactions.filter(t => t.status === "Success");
-  const processingTransactions = transactions.filter(t => t.status === "Processing");
-
   // Calculate statistics based on successful transactions only
   const totalSent = successfulTransactions
     .filter(t => t.type === "SENT")
@@ -218,7 +138,7 @@ export default async function Wallet() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
             <div>
               <p className="text-indigo-100 text-sm font-medium mb-1">Total Balance</p>
-              <p className="text-3xl sm:text-4xl font-bold">₹{(totalBalance / 100).toFixed(2)}</p>
+              <p className="text-3xl sm:text-4xl font-bold">₹{(totalBalance / 100)}</p>
             </div>
             <div className="mt-4 sm:mt-0">
               <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
@@ -229,7 +149,7 @@ export default async function Wallet() {
                 ) : (
                   <ArrowTrendingDownIcon className="h-4 w-4 mr-1" />
                 )}
-                {netGrowth >= 0 ? '+' : ''}{growthPercentage.toFixed(1)}% growth
+                {netGrowth >= 0 ? '+' : ''}{growthPercentage}% growth
               </div>
             </div>
           </div>
@@ -237,15 +157,15 @@ export default async function Wallet() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
               <p className="text-indigo-100 text-xs font-medium mb-1">Available</p>
-              <p className="text-xl font-semibold">₹{((balance?.amount || 0) / 100).toFixed(2)}</p>
+              <p className="text-xl font-semibold">₹{((balance?.amount || 0) / 100)}</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
               <p className="text-indigo-100 text-xs font-medium mb-1">Locked</p>
-              <p className="text-xl font-semibold">₹{((balance?.locked || 0) / 100).toFixed(2)}</p>
+              <p className="text-xl font-semibold">₹{((balance?.locked || 0) / 100)}</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
               <p className="text-indigo-100 text-xs font-medium mb-1">Monthly Volume</p>
-              <p className="text-xl font-semibold">₹{monthlyVolume.toFixed(2)}</p>
+              <p className="text-xl font-semibold">₹{monthlyVolume}</p>
             </div>
           </div>
         </div>
@@ -259,7 +179,7 @@ export default async function Wallet() {
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Added</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalAdded.toFixed(2)}</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalAdded}</p>
               </div>
             </div>
           </div>
@@ -271,7 +191,7 @@ export default async function Wallet() {
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Received</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalReceived.toFixed(2)}</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalReceived}</p>
               </div>
             </div>
           </div>
@@ -283,7 +203,7 @@ export default async function Wallet() {
               </div>
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Total Sent</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalSent.toFixed(2)}</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">₹{totalSent}</p>
               </div>
             </div>
           </div>
@@ -296,7 +216,7 @@ export default async function Wallet() {
               <div className="ml-3 sm:ml-4 min-w-0 flex-1">
                 <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">Net Growth</p>
                 <p className={`text-lg sm:text-2xl font-bold truncate ${netGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {netGrowth >= 0 ? '+' : ''}₹{netGrowth.toFixed(2)}
+                  {netGrowth >= 0 ? '+' : ''}₹{netGrowth}
                 </p>
               </div>
             </div>

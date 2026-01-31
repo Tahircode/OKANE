@@ -1,8 +1,8 @@
 "use server";
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
-import db from "@repo/db/client"
+import {db} from "@repo/db"
+import { updateUserProfileCache } from "@repo/db";
 
 interface UpdateProfileState {
   success: boolean;
@@ -40,7 +40,7 @@ export async function updateProfileAction(
 
     // Validate email if provided
     if (email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         return {
           success: false,
@@ -51,7 +51,7 @@ export async function updateProfileAction(
 
     // Validate phone if provided
     if (phone) {
-      const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
+         const phoneRegex = /^\+?[\d\s\-()]{10,}$/;
       if (!phoneRegex.test(phone)) {
         return {
           success: false,
@@ -59,9 +59,9 @@ export async function updateProfileAction(
         };
       }
     }
-
     // Update user in database - replace this with your actual database logic
     const updateResult = await updateUserInDatabase(session.user.id, { email, phone });
+    await updateUserProfileCache(session.user.id, {email,phone});
 
     if (!updateResult.success) {
       return {
@@ -75,7 +75,7 @@ export async function updateProfileAction(
       message: "Profile updated successfully!",
       user: {
         email: email || session.user.email,
-        phone: phone || (session.user as any).phone,
+        phone: phone || (session.user).phone,
       },
     };
 
@@ -93,10 +93,8 @@ async function updateUserInDatabase(
   updates: { email?: string; phone?: string }
 ): Promise<{ success: boolean; message?: string }> {
   try {
-    // Replace this with your actual database update logic
-    console.log("Updating user in database:", { userId, updates });
 
-     const u = await db.user.update({
+      await db.user.update({
             where :{
                 id: userId
             },

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export default function AuthCallback() {
-  const { data: session, status } = useSession();
+  const { status} = useSession();
   const router = useRouter();
   const hasHandled = useRef(false); // Prevents the effect from running multiple times
 

@@ -1,6 +1,7 @@
 // components/SendCard.tsx
 import { useState, useEffect } from "react";
 import { p2pTransfer } from "../app/lib/actions/p2pTransfer";
+import Image from "next/image";
 import {
   UserCircleIcon,
   PhoneIcon,
@@ -64,7 +65,7 @@ export function SendCard({
   // Validate form
   const validateForm = (): boolean => {
     const newErrors: { amount?: string; number?: string } = {};
-    
+
     if (!amount || isNaN(Number(amount))) {
       newErrors.amount = "Please enter a valid amount";
     } else if (Number(amount) <= 0) {
@@ -72,14 +73,14 @@ export function SendCard({
     } else if (Number(amount) > 100000) {
       newErrors.amount = "Maximum amount is ₹1,00,000";
     }
-    
+
     if (!number) {
       newErrors.number = "Please enter a phone number";
-    } 
+    }
     // else if (!validatePhoneNumber(number)) {
     //   newErrors.number = "Please enter a valid 10-digit phone number";
     // }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -87,7 +88,7 @@ export function SendCard({
   // Handle transfer
   const handleTransfer = async () => {
     if (!validateForm()) return;
-    
+
     // Show confirmation modal
     setTransactionDetails({
       recipient: selectedContact?.name || number,
@@ -100,7 +101,7 @@ export function SendCard({
   const confirmTransfer = async () => {
     setLoading(true);
     onTransferStart(); // Notify parent that transfer has started
-    
+
     try {
       const result = await p2pTransfer(number, Number(amount) * 100);
       if (result && typeof result === "object" && "success" in result) {
@@ -158,10 +159,12 @@ export function SendCard({
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3 flex-1 min-w-0">
                 {selectedContact.image ? (
-                  <img
+                  <Image
                     src={selectedContact.image}
                     alt={selectedContact.name || "User"}
-                    className="h-10 w-10 rounded-full object-cover flex-shrink-0"
+                     width={30}
+                     height={30}
+                    className="rounded-full object-cover"
                   />
                 ) : (
                   <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 flex-shrink-0">
@@ -214,13 +217,12 @@ export function SendCard({
                 }}
                 placeholder="Enter 10-digit number"
                 disabled={!!selectedContact?.phone || loading}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                  errors.number
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.number
                     ? "border-red-500 focus:ring-red-500"
                     : selectedContact?.phone || loading
-                    ? "bg-gray-100 text-gray-500 border-gray-300"
-                    : "border-gray-300 text-gray-900"
-                }`}
+                      ? "bg-gray-100 text-gray-500 border-gray-300"
+                      : "border-gray-300 text-gray-900"
+                  }`}
               />
               {errors.number && (
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -261,11 +263,10 @@ export function SendCard({
                 }}
                 placeholder="0.00"
                 disabled={loading}
-                className={`w-full pl-8 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                  errors.amount
+                className={`w-full pl-8 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 ${errors.amount
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300"
-                } disabled:bg-gray-100 disabled:text-gray-500`}
+                  } disabled:bg-gray-100 disabled:text-gray-500`}
               />
               {errors.amount && (
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -276,7 +277,7 @@ export function SendCard({
             {errors.amount && (
               <p className="mt-1 text-sm text-red-600">{errors.amount}</p>
             )}
-            
+
             {/* Quick Amount Buttons */}
             <div className="mt-3 flex flex-wrap gap-2">
               {quickAmounts.map((value) => (

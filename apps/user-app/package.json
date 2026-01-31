@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "user-app",
   "version": "0.1.0",
   "type": "module",
   "private": true,
@@ -11,8 +11,10 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@alloc/quick-lru": "^5.2.0",
     "@auth/prisma-adapter": "^2.10.0",
     "@heroicons/react": "^2.2.0",
+    "@prisma/client": "^7.3.0",
     "@radix-ui/react-slot": "^1.2.3",
     "@repo/db": "*",
     "@repo/ui": "*",

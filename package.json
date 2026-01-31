@@ -1,5 +1,5 @@
 {
-  "name": "week-18",
+  "name": "okane",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -17,7 +17,7 @@
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "prettier": "^3.2.5",
-    "prisma": "^6.17.1",
+    "prisma": "^7.3.0",
     "turbo": "latest"
   },
   "engines": {
@@ -29,9 +29,10 @@
     "packages/*"
   ],
   "dependencies": {
-    "@prisma/client": "^6.17.1",
+    "@prisma/client": "^7.3.0",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
+    "@upstash/redis": "^1.36.1",
     "array-flatten": "^3.0.0",
     "axios": "^1.12.2",
     "cors": "^2.8.5",
@@ -60,9 +61,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
-    "url": "https://github.com/Tahircode/okane3/issues"
+    "url": "https://github.com/Tahircode/okane/issues"
   },
-  "homepage": "https://github.com/Tahircode/okane3#readme"
+  "homepage": "https://github.com/Tahircode/okane#readme"
 }

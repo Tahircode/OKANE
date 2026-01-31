@@ -33,26 +33,33 @@ const getStatusColor = (status: string) => {
     }
 };
 
-const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-IN', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    }).format(date);
+
+const formatDate = (date?: Date | string | null) => {
+  if (!date) return "—";
+
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "—";
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d);
 };
 
-export const OnRampTransactions = ({
-    transactions
-}: {
-    transactions: {
-        time: Date,
+export interface trans {
+        id: string,
         amount: number,
+        timestamp: Date,
         status: "Processing" | "Success" | "Failure",
-        provider: string
-    }[]
-}) => {
+        provider: string,
+        type : "ADDED",
+}
+
+export function OnRampTransactions (
+    {transactions}: {transactions : trans[]}){
     if (!transactions.length) {
         return (
             <Card title="Recent Transactions">
@@ -72,7 +79,7 @@ export const OnRampTransactions = ({
             <div className="space-y-3">
                 {transactions.map((t, index) => (
                     <div 
-                        key={t.time.toISOString() + index} 
+                        key={index}
                         className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
                         <div className="flex items-center space-x-3">
@@ -92,7 +99,7 @@ export const OnRampTransactions = ({
                                 <div className="flex flex-col sm:flex-row items-center space-x-2 text-xs text-gray-500">
                                     <span className="hidden sm:block">{t.provider}</span>
                                     <span>•</span>
-                                    <span>{formatDate(t.time)}</span>
+                                   <span>{formatDate(t.timestamp)}</span>
                                 </div>
                             </div>
                         </div>

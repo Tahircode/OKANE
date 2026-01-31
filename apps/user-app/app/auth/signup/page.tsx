@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { initialState, FormState } from "../../lib/types/form";
 import { signUpAction } from "../../lib/auth/signup"
@@ -81,7 +82,7 @@ export default function SignUpPage() {
               id="name"
               name="name"
               type="text"
-              placeholder="aakash"
+              placeholder="tahir"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
             />
@@ -96,7 +97,7 @@ export default function SignUpPage() {
               id="phone"
               name="phone"
               type="text"
-              placeholder="9195937923"
+              placeholder="9149110011"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
               aria-describedby={state.errors?.phone ? 'phone-error' : undefined}
@@ -182,8 +183,12 @@ export default function SignUpPage() {
           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
         >
-          <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" className="w-5 h-5" />
-          <span className="text-gray-700">Continue with Google</span>
+<Image
+  src="https://www.svgrepo.com/show/355037/google.svg"
+  alt="Google"
+  width={20}
+  height={20}
+/>          <span className="text-gray-700">Continue with Google</span>
         </button>
 
         {/* <button

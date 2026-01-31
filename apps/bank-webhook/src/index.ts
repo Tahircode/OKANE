@@ -1,13 +1,16 @@
+import "dotenv/config";
 import express from 'express';
-import db from "@repo/db/client";
-import cors from 'cors' 
-
+import { db } from "@repo/db";
+import cors from 'cors'
+import { invalidateBalance } from '@repo/db'
+import { addonRampHistory } from '@repo/db'
 const app = express();
 app.use(express.json());
+
 app.use(cors({
-  origin: ["http://localhost:3001" , "https://okane.vercel.app"], 
+  origin: ["http://localhost:3001", "https://okane.vercel.app"],
   methods: ["GET", "POST"],
-  }
+}
 ))
 
 // Define payment info interface
@@ -15,9 +18,11 @@ interface PaymentInfo {
   token: string;
 }
 
-app.get("/hdfcwebhook" ,async (req,res)=>{
+app.get("/hdfcwebhook", async (req, res) => {
   res.send("HDFC PAGE Auto Verifiing payment is Upppp!!!")
 })
+
+
 app.post("/hdfcwebhook", async (req, res) => {
   try {
     const paymentInfo: PaymentInfo = {
@@ -29,35 +34,33 @@ app.post("/hdfcwebhook", async (req, res) => {
       return res.status(400).json({
         message: "Token is required",
       });
-    }
-
-    const result = await db.$transaction(async (tx : any ) => {
-      // Check transaction status first
-
-      const transaction = await tx.onRampTransaction.findFirst({
+    }    
+    
+      const transaction = await db.onRampTransaction.findFirst({
         where: {
           token: paymentInfo.token,
         },
         select: {
+          id : true,
           amount: true,
           userId: true,
           status: true,
+          provider: true,
+          timestamp: true,
         },
       });
-
 
       // Handle invalid transaction
       if (!transaction) {
         return { success: false, message: "Invalid Transaction" };
       }
 
-
       // Handle already processed transaction
       if (transaction.status === "Success") {
         return { success: false, message: "Transaction already processed" };
       }
 
-      // Update transaction status
+    const result = await db.$transaction(async (tx: any) => {
       await tx.onRampTransaction.update({
         where: {
           token: paymentInfo.token,
@@ -78,27 +81,38 @@ app.post("/hdfcwebhook", async (req, res) => {
           },
         },
       });
-
-      return { success: true, message: "Captured" };
+      return { success: true, message: "Captured", newBalance: "updated" };
     });
-
-    // Send response based on transaction result
+    await Promise.all([
+      invalidateBalance(transaction.userId),
+      addonRampHistory(transaction.userId, {
+        id: transaction.id,
+        amount: transaction.amount,
+        provider: transaction.provider,
+        userId: transaction.userId,
+        timestamp: transaction.timestamp,
+        status: "Success" as const,
+        type: "CREDIT" as const,
+      })
+    ]);
     if (result.success) {
-      // res.redirect("http://localhost:3000")
       res.json({
         message: result.message,
       });
     } else {
-      res.status(400).json({
+      res.status(200).json({
         message: result.message,
       });
     }
+
   } catch (e) {
     console.error(e);
     res.status(500).json({
       error: e instanceof Error ? e.message : "Internal server error",
     });
   }
+
+
 });
 
 app.listen(3004, () => {

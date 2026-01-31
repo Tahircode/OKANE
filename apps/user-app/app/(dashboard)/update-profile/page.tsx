@@ -8,7 +8,6 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { updateProfileAction } from "../../lib/auth/update";
 import Link from "next/link";
-
 const SubmitButton = () => {
   const { pending } = useFormStatus();
   return (
@@ -51,15 +50,14 @@ const SubmitButton = () => {
       const updateSessionData = async () => {
         try {
           // Force a session update to get the latest data from the server
-          await updateSession({
+           await updateSession({
             ...session,
             user: {
               ...session?.user,
               email: state.user?.email || session?.user?.email,
-              phone: state.user?.phone || (session?.user as any)?.phone,
+              phone: state.user?.phone || (session?.user)?.phone,
             }
           });
-          
           // Add a small delay to show success message
           setTimeout(() => {
             router.push("/dashboard");
@@ -149,16 +147,16 @@ const SubmitButton = () => {
           {showPhone && (
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                Phone Number {!(session.user as any)?.phone && <span className="text-red-500">*</span>}
+                Phone Number {!(session?.user)?.phone && <span className="text-red-500">*</span>}
               </label>
               <input
                 id="phone"
                 name="phone"
                 type="tel"
                 placeholder="+91 8806745641"
-                defaultValue={(session.user as any)?.phone || ''}
+                defaultValue={(session?.user)?.phone || ''}
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
-                required={!(session.user as any)?.phone}
+                required={!(session?.user)?.phone}
                 disabled={isSubmitting}
               />
               <p className="mt-1 text-xs text-gray-500">
@@ -175,7 +173,7 @@ const SubmitButton = () => {
             href="/dashboard"
             className="text-sm text-gray-500 hover:text-gray-700 underline"
           >
-            I'll do this later
+            I&apos;ll do this later
           </Link>
         </div>
       </div>

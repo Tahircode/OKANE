@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { 
   ArrowTrendingUpIcon, 
@@ -21,7 +22,14 @@ export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [greeting, setGreeting] = useState("");
   const [mounted, setMounted] = useState(false);
+  const {data : session} = useSession();
+  const [name, setName] = useState("User!");
 
+   useEffect(()=>{
+      if(session?.user?.name){
+        setName(session.user.name);
+      }
+   },[session]);
   useEffect(() => {
     setMounted(true);
     setCurrentTime(new Date());
@@ -100,7 +108,7 @@ export default function Dashboard() {
           <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
             <div className="min-w-0 flex-1">
               <h1 className="text-2xl sm:text-2xl lg:text-3xl font-mono bg-clip-text  mb-1 sm:mb-2 truncate">
-                {greeting},User!
+                {greeting},{name}
               </h1>
               <p className="text-sm sm:text-base text-gray-600">{formatDate(currentTime)}</p>
             </div>
@@ -443,7 +451,7 @@ export default function Dashboard() {
         {/* Today's Offer */}
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Today's Offer</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Todays Offer</h2>
             <div className="flex items-center text-xs sm:text-sm text-gray-500">
               <ClockIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               <span>Ends in 14:32:45</span>

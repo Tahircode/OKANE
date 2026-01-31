@@ -3,8 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { useState, useRef, useEffect } from "react";
 import { Session } from "next-auth";
-import { 
-  UserIcon, 
+import {
+  UserIcon,
   Cog6ToothIcon,
   CreditCardIcon,
   ChartBarIcon,
@@ -21,12 +21,15 @@ interface AppbarProps {
   onSignout: () => void;
   loading?: boolean;
   session: Session | null;
-  status: "authenticated" | "unauthenticated" | "loading"; 
+  status: "authenticated" | "unauthenticated" | "loading";
 }
 
 export const Appbar = ({ onSignin, onSignout, loading, session, status }: AppbarProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showDropSide, setShowDropSide] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropsideRef = useRef<HTMLDivElement>(null);
+
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -34,6 +37,10 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
+      if (dropsideRef.current && !dropsideRef.current.contains(event.target as Node)) {
+        setShowDropSide(false);
+      }
+      
     }
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -60,13 +67,14 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
 
   // Extract contact details from session 
   const contactEmail = user?.email;
-  const contactPhone = (user as any)?.phone; 
+  const contactPhone = user?.phone;
   const userName = user?.name;
   const userImage = user?.image;
 
   // Check if user needs to add contact information
   const needsPhoneNumber = isUserAuthenticated && !contactPhone;
   const needsEmail = isUserAuthenticated && !contactEmail;
+
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl 
@@ -77,7 +85,7 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
       <Link href="/dashboard">
         <div className="flex items-center gap-2 cursor-pointer group">
           <div className="relative">
-            
+
             <span className="text-2xl md:text-3xl font-mono tracking-wide 
               bg-gradient-to-r from-green-600 to-emerald-400 text-transparent bg-clip-text 
               group-hover:from-green-700 group-hover:to-emerald-500 transition-all duration-300">
@@ -87,45 +95,50 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
           </div>
           <span className="text-2xl text-black group-hover:rotate-12 transition-transform duration-300">お金</span>
         </div>
-        </Link>
+      </Link>
 
       {/* Right Section */}
       <div className="flex items-center gap-3 md:gap-4">
-        {/* Add Contact Information Buttons - Only show when user is missing info */}
-        <div className="flex items-center gap-2">
-          {needsEmail && (
-            <Link href="/update-profile?field=email">
-              <button className="hidden  sm:flex items-center gap-2 px-3 py-2 text-xs font-medium 
-                bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg 
-                hover:from-blue-600 hover:to-indigo-600 transition-all shadow-md"
-              >
-                <EnvelopeIcon className="h-3 w-3" />
-                Add Email
-              </button>
-            </Link>
-          )}
-          
-          {needsPhoneNumber && (
-            <Link href="/update-profile?field=phone">
-              <button className="hidden sm:flex items-center gap-2 px-3 py-2 text-xs font-medium 
-                bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg 
-                hover:from-amber-600 hover:to-orange-600 transition-all shadow-md"
-              >
-                <PhoneIcon className="h-3 w-3" />
-                Add Phone for Transactions
-              </button>
-            </Link>
-          )}
-        </div>
+      <div className="relative">
+  <button
+    onClick={() => setShowDropSide(!showDropSide)}
+    className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+  >
+    <BellIcon className="h-5 w-5" />
+    {/* Only show red dot if there are notifications */}
+    {(needsEmail || needsPhoneNumber) && (
+      <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+    )}
+  </button>
 
-        {/* Notifications - Only show when logged in */}
-        {isUserAuthenticated && (
-          <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-            <BellIcon className="h-5 w-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
+  {showDropSide && (
+    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border z-50">
+      <div className="p-2 space-y-1">
+        {needsEmail ? (
+          <a
+            href="/update-profile?field=email"
+            className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded text-sm"
+          >
+            <EnvelopeIcon className="h-4 w-4 text-blue-500" />
+            <span>Add your email address</span>
+          </a>
+        ) : needsPhoneNumber ? (
+          <a
+            href="/update-profile?field=phone"
+            className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded text-sm"
+          >
+            <PhoneIcon className="h-4 w-4 text-amber-500" />
+            <span>Add phone number</span>
+          </a>
+        ) : (
+          <div className="flex items-center justify-center p-2 text-gray-500 text-sm">
+            No Updates
+          </div>
         )}
-
+      </div>
+    </div>
+  )}
+</div>
         {/* User Profile Section */}
         {isUserAuthenticated && user ? (
           <div className="relative" ref={dropdownRef}>
@@ -147,7 +160,7 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
                   {userName ? userName.charAt(0).toUpperCase() : "U"}
                 </div>
               )}
-              
+
               {/* User Info - Hidden on mobile */}
               <div className="hidden md:block text-left">
                 <p className="text-sm font-medium text-gray-900">
@@ -157,7 +170,7 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
                   {contactEmail || contactPhone || "No contact info"}
                 </p>
               </div>
-              
+
               <ChevronDownIcon className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
             </button>
 
@@ -199,8 +212,8 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
                         <span className="text-gray-700 break-all">{contactEmail}</span>
                       </div>
                     ) : (
-                      <Link 
-                        href="/update-profile?field=email" 
+                      <Link
+                        href="/update-profile?field=email"
                         className="flex items-center gap-3 text-sm text-blue-600 hover:text-blue-700"
                         onClick={() => setIsDropdownOpen(false)}
                       >
@@ -208,15 +221,15 @@ export const Appbar = ({ onSignin, onSignout, loading, session, status }: Appbar
                         <span>Add Email for Updates</span>
                       </Link>
                     )}
-                    
+
                     {contactPhone ? (
                       <div className="flex items-center gap-3 text-sm">
                         <PhoneIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />
                         <span className="text-gray-700">{contactPhone}</span>
                       </div>
                     ) : (
-                      <Link 
-                        href="/update-profile?field=phone" 
+                      <Link
+                        href="/update-profile?field=phone"
                         className="flex items-center gap-3 text-sm text-amber-600 hover:text-amber-700"
                         onClick={() => setIsDropdownOpen(false)}
                       >
