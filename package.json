@@ -1,18 +1,22 @@
 {
   "name": "okane",
   "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "postinstall": "npx prisma generate --schema=packages/db/prisma/schema.prisma",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "db:generate": "cd packages/db && npx prisma generate && cd ../..",
-    "db:migrate": "prisma migrate dev --schema=packages/db/prisma/schema.prisma",
-    "db:push": "prisma db push --schema=packages/db/prisma/schema.prisma",
-    "db:studio": "prisma studio --schema=packages/db/prisma/schema.prisma",
-    "start-user-app": "cd ./apps/user-app && npm run start"
-  },
+ "scripts": {
+  "build": "turbo build",
+  "dev": "turbo dev",
+  "lint": "turbo lint",
+
+  "postinstall": "npm run db:build && npx prisma generate --schema=packages/db/prisma/schema.prisma",
+
+  "db:build": "cd packages/db && npm run build && cd ../..",
+  "db:generate": "cd packages/db && npx prisma generate && cd ../..",
+  "db:migrate": "prisma migrate dev --schema=packages/db/prisma/schema.prisma",
+  "db:push": "prisma db push --schema=packages/db/prisma/schema.prisma",
+  "db:studio": "prisma studio --schema=packages/db/prisma/schema.prisma",
+
+  "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+  "start-user-app": "cd ./apps/user-app && npm run start"
+},
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",

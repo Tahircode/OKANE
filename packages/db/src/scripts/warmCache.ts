@@ -23,6 +23,15 @@ export type OnRampTxnType = {
     timestamp: Date;
     userId: string;
 };
+type OnRampHistoryItem = {
+  id: string;
+  amount: number;
+  status: "Success" | "Failure" | "Processing";
+  provider: string;
+  timestamp: Date;
+  type: "CREDIT";
+  userId: string;
+};
 
 const redis = getRedisClient();
 const MAX_HISTORY_TO_WARM = 50;
@@ -80,7 +89,7 @@ export async function warmHistory(userId: string): Promise<void> {
         ]);
 
         // 2. Process OnRamp History
-        const onRampHistory = onRampTxns.map((tx: OnRampTxnType) => ({
+        const onRampHistory: OnRampHistoryItem[] = onRampTxns.map((tx: OnRampTxnType) => ({
             id: tx.id,
             amount: tx.amount,
             status: tx.status,

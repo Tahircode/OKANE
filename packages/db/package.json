@@ -10,11 +10,11 @@
     }
   },
   "scripts": {
-    "generate": "prisma generate --schema=./prisma/schema.prisma",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -b",
-    "clear-cache": "DOTENV_CONFIG_PATH=.env.local ts-node --esm /scripts/clearCache.ts"
-  },
+  "generate": "prisma generate --schema=./prisma/schema.prisma",
+  "build": "prisma generate --schema=./prisma/schema.prisma && tsc -b",
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "clear-cache": "DOTENV_CONFIG_PATH=.env.local ts-node --esm scripts/clearCache.ts"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
