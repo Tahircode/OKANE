@@ -3,6 +3,7 @@ OKANE 💳
 A Scalable, Cache-Optimized Digital Wallet & P2P Payment Platform
 
 - OKANE is a full-stack digital wallet and peer-to-peer (P2P) payment application designed with scalability, performance, and financial correctness in mind.
+
 It follows industry-grade backend patterns, uses Redis caching, and is structured as a Turborepo monorepo for clean separation of concerns.
 
 ✨ Features
@@ -238,4 +239,8 @@ This project is intentionally designed to reflect real-world backend engineering
 
 If you’re reviewing this as a recruiter or engineer:
 
+<<<<<<< HEAD
 The emphasis is on correctness, performance, and architecture, not just features.
+=======
+The emphasis is on correctness, performance, and architecture, not just features.
+>>>>>>> 14f0236 (Redis cache-warming system using GitHub Actions)

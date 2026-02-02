@@ -107,7 +107,6 @@ export const AddMoney = () => {
 
         try {
             const d = await createOnRampTranctions(Number(amount), provider);
-            console.log("Transaction created:", d);
 
             // Update transaction details with token
             setTransactionDetails({
@@ -119,7 +118,6 @@ export const AddMoney = () => {
             await axios.post(redirectUrl!, {
                 token: `${d.token}`,
             });
-            console.log("Webhook notification sent");
 
             // Show success state
             setTransactionSuccess(true);

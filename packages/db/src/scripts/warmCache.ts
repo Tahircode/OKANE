@@ -43,7 +43,6 @@ async function warmCache() {
             select: { id: true }
         });
         if (users.length === 0) return;
-        let processedUsers = 0;
         for (const user of users) {
             const userId = user.id;
 
@@ -53,7 +52,6 @@ async function warmCache() {
                 getContacts(userId),
                 warmHistory(userId), 
             ]);
-            processedUsers++;
         }
         const duration = (Date.now() - startTime) / 1000;
 
@@ -89,7 +87,7 @@ export async function warmHistory(userId: string): Promise<void> {
         ]);
 
         // 2. Process OnRamp History
-        const onRampHistory: OnRampHistoryItem[] = onRampTxns.map((tx: OnRampTxnType) => ({
+        const onRampHistory: OnRampHistoryItem[] = onRampTxns.map((tx) => ({
             id: tx.id,
             amount: tx.amount,
             status: tx.status,
@@ -100,7 +98,7 @@ export async function warmHistory(userId: string): Promise<void> {
         }));
 
         if (onRampHistory.length > 0) {
-            onRampHistory.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            onRampHistory.sort((a, b) => (b.timestamp).getTime() - (a.timestamp).getTime());
             const recentOnRampHistory = onRampHistory.slice(0, MAX_HISTORY_TO_WARM);
             const onRampStrings = recentOnRampHistory.map(tx => JSON.stringify(tx));
             await redis.del(onRampCacheKey);
@@ -134,7 +132,7 @@ export async function warmHistory(userId: string): Promise<void> {
             })),
         ];
         if (p2pHistory.length > 0) {
-            p2pHistory.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            p2pHistory.sort((a, b) => (b.timestamp).getTime() - (a.timestamp).getTime());
             const recentP2pHistory = p2pHistory.slice(0, MAX_HISTORY_TO_WARM);
             const p2pStrings = recentP2pHistory.map(tx => JSON.stringify(tx));
             await redis.del(p2pCacheKey);
