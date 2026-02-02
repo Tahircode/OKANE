@@ -18,7 +18,7 @@
     "@repo/typescript-config": "*",
     "prettier": "^3.2.5",
     "prisma": "^7.3.0",
-    "turbo": "latest"
+    "turbo": "^2.8.1"
   },
   "engines": {
     "node": ">=18"
@@ -38,6 +38,7 @@
     "cors": "^2.8.5",
     "encodeurl": "^2.0.0",
     "escape-html": "^1.0.3",
+    "eslint": "^9.39.2",
     "methods": "^1.1.2",
     "next": "15.5.9",
     "next-auth": "^4.24.11",
