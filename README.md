@@ -1,135 +1,241 @@
-# Turborepo starter
+OKANE 💳
 
-This Turborepo starter is maintained by the Turborepo core team.
+A Scalable, Cache-Optimized Digital Wallet & P2P Payment Platform
 
-## Using this example
+- OKANE is a full-stack digital wallet and peer-to-peer (P2P) payment application designed with scalability, performance, and financial correctness in mind.
+It follows industry-grade backend patterns, uses Redis caching, and is structured as a Turborepo monorepo for clean separation of concerns.
 
-Run the following command:
+✨ Features
 
-```sh
-npx create-turbo@latest
-```
+🔐 Authentication & Authorization
 
-## What's inside?
+- Google OAuth
 
-This Turborepo includes the following packages/apps:
+- Credentials (NextAuth)
 
-### Apps and Packages
+💰 Wallet System
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- Add money via bank webhook simulation
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- Maintain available & locked balances
 
-### Utilities
+- ACID-compliant balance updates
 
-This Turborepo has some additional tools already setup for you:
+🔁 P2P Transfers
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- Real-time balance transfers between users
 
-### Build
+- Row-level locking to prevent race conditions
 
-To build all apps and packages, run the following command:
+- Transaction status tracking (Success | Failure | Processing)
 
-```
-cd my-turborepo
+⚡ Redis Caching (Upstash)
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+- Cached balances, transaction history, user profiles
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+- Cache invalidation on writes
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+- On-demand cache warming
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+- Scheduled cache warm-up via GitHub Actions
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+📦 Monorepo Architecture
 
-### Develop
+Shared database & cache logic
 
-To develop all apps and packages, run the following command:
+Clear separation between frontend, backend, and workers
 
-```
-cd my-turborepo
+🐳 Dockerized Setup
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+Consistent local & production environments
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+🧠 Architecture Overview
+OKANE (Turborepo)
+│
+├── apps/
+│   ├── user-app        → Next.js frontend + server actions (Vercel)
+│   └── bank-webhook    → Express webhook service (Render)
+│
+├── packages/
+│   ├── db              → Prisma, PostgreSQL, Redis cache layer
+│   └── ui              → Shared UI components
+│
+└── docker-compose.yml
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+High-level Flow
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+User App (Next.js)
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+Handles UI, authentication, server actions
 
-### Remote Caching
+Reads from Redis first, falls back to DB
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+Database Layer (PostgreSQL + Prisma)
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+Strong consistency for all financial operations
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+Transactions + row locking for correctness
 
-```
-cd my-turborepo
+Cache Layer (Upstash Redis)
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+Read-heavy data served from Redis
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+Cache invalidated after writes
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+Cache warmed asynchronously
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+Bank Webhook Service
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+Processes add-money requests
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+Updates DB transactionally
 
-## Useful Links
+Invalidates Redis cache
 
-Learn more about the power of Turborepo:
+🛠 Tech Stack
+Frontend
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+Next.js (App Router)
+
+TypeScript
+
+Tailwind CSS
+
+Heroicons
+
+Backend
+
+Node.js
+
+Express (bank-webhook)
+
+NextAuth (authentication)
+
+Prisma ORM
+
+Database & Cache
+
+PostgreSQL
+
+Redis (Upstash)
+
+DevOps & Tooling
+
+Turborepo
+
+Docker & Docker Compose
+
+GitHub Actions (scheduled cache warmer)
+
+Vercel (user-app)
+
+Render (bank-webhook)
+
+⚙️ Setup & Installation
+1️⃣ Clone the repository
+git clone https://github.com/your-username/OKANE.git
+cd OKANE
+
+2️⃣ Install dependencies
+npm install
+
+3️⃣ Environment Variables
+
+Each service requires its own environment variables.
+
+apps/user-app/.env.local
+DATABASE_URL=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=http://localhost:3000
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+
+apps/bank-webhook/.env
+DATABASE_URL=
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+
+packages/db/.env
+DATABASE_URL=
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+
+4️⃣ Database setup
+npm run db:generate
+npm run db:migrate
+
+5️⃣ Run locally
+npm run dev
+
+
+User app → http://localhost:3000
+
+Bank webhook → http://localhost:3004
+
+🧪 Cache Strategy
+
+Read-first from Redis
+
+Write-through to DB
+
+Cache invalidation on mutation
+
+On-demand cache warm-up
+
+Scheduled warm-up (GitHub Actions)
+
+This reduces:
+
+DB load
+
+Cold-start latency
+
+Expensive joins on frequent reads
+
+⚠️ Errors & Lessons Learned
+
+Handled Prisma transaction timeouts (P2028) by reducing transaction scope
+
+Avoided race conditions using SELECT … FOR UPDATE
+
+Ensured Redis failures do not block core DB operations
+
+Fixed monorepo deployment issues using proper package exports
+
+Solved Vercel workspace resolution for shared packages
+
+🚀 Future Improvements
+
+Idempotent webhook processing
+
+WebSockets for real-time balance updates
+
+Distributed locks for multi-instance writes
+
+Rate limiting & fraud detection
+
+Observability (metrics + tracing)
+
+Background workers for heavy cache operations
+
+📸 Screenshots / Diagrams
+
+(You can add architecture diagrams or UI screenshots here later)
+
+👤 Author
+
+Tahir Aziz Khan
+Final-year Engineer | Backend & Full-Stack Developer
+Focused on scalable systems, caching strategies, and financial correctness
+
+⭐ Final Note
+
+This project is intentionally designed to reflect real-world backend engineering decisions, not just CRUD functionality.
+
+If you’re reviewing this as a recruiter or engineer:
+
+The emphasis is on correctness, performance, and architecture, not just features.
