@@ -10,11 +10,11 @@
     }
   },
   "scripts": {
-  "generate": "prisma generate --schema=./prisma/schema.prisma",
-  "build": "prisma generate --schema=./prisma/schema.prisma && tsc -b",
-  "test": "echo \"Error: no test specified\" && exit 1",
-  "clear-cache": "DOTENV_CONFIG_PATH=.env.local ts-node --esm scripts/clearCache.ts"
-},
+    "generate": "prisma generate --schema=./prisma/schema.prisma",
+    "build": "prisma generate --schema=./prisma/schema.prisma && tsc -b",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clear-cache": "DOTENV_CONFIG_PATH=.env.local ts-node --esm scripts/clearCache.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -23,12 +23,15 @@
     "@auth/prisma-adapter": "^2.11.1",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
-    "pg": "^8.17.2",
-    "prisma": "^7.3.0",
     "@upstash/redis": "^1.0.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "pg": "^8.17.2",
+    "prisma": "^7.3.0"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.16.0"
   }
 }
