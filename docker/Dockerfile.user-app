@@ -1,32 +1,28 @@
-FROM node:24-alpine
+# ---- Base ----
+FROM node:24-alpine AS base
 WORKDIR /usr/src/app
 
-# 1. FIRST, copy only package files
-COPY package.json package-lock.json turbo.json ./
-# Copy the root tsconfig.json if it exists and is needed for installation
-# If packages have their own, you might not need the root one here.
-# COPY tsconfig.json ./
+# 1. Copy package files FIRST (for better caching)
+COPY package*.json ./
+COPY turbo.json ./
 
-# 2. Configure npm (optional, for resilience)
-RUN npm config set fetch-retries 5 \
- && npm config set fetch-retry-mintimeout 20000 \
- && npm config set fetch-retry-maxtimeout 120000
-
-# 3. Install dependencies (CACHEABLE LAYER)
+# 2. Skip postinstall scripts during npm install
 RUN npm_config_ignore_scripts=true npm ci
 
-# 4. Generate Prisma Client EARLY
-# Copy ONLY the Prisma schema needed for generation first
+# 3. Copy Prisma schema and generate client
 COPY packages/db/prisma/schema.prisma ./packages/db/prisma/schema.prisma
-RUN cd packages/db && npx prisma generate --schema=./prisma/schema.prisma && cd ../..
+RUN npx prisma generate --schema=packages/db/prisma/schema.prisma
 
-# 5. NOW copy the rest of the application code
+# 4. NOW copy the rest of the code
 COPY apps ./apps
 COPY packages ./packages
-# Copy the rest of the config files needed for build
-COPY tsconfig.json ./
 
-# 6. Build the application
+# 5. Build the application
 RUN npm run build
 
-CMD ["npm", "run", "start-user-app"]
+# ---- Application Targets ----
+FROM base AS userapp
+CMD ["npm", "run", "dev", "--", "--filter=userapp"]
+
+FROM base AS bank-webhook
+CMD ["npm", "run", "dev", "--", "--filter=bank-webhook"]
