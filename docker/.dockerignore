@@ -1,0 +1,31 @@
+# dependencies
+node_modules
+**/node_modules
+
+# build output
+.next
+dist
+build
+.out
+
+# turborepo
+.turbo
+
+# env
+.env
+.env.*
+
+# git
+.git
+.gitignore
+
+# logs
+npm-debug.log
+yarn-error.log
+
+# docker
+Dockerfile*
+docker-compose.yml
+
+# prisma engines (will be regenerated)
+**/.prisma

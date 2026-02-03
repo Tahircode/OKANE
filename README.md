@@ -239,8 +239,4 @@ This project is intentionally designed to reflect real-world backend engineering
 
 If you’re reviewing this as a recruiter or engineer:
 
-<<<<<<< HEAD
 The emphasis is on correctness, performance, and architecture, not just features.
-=======
-The emphasis is on correctness, performance, and architecture, not just features.
->>>>>>> 14f0236 (Redis cache-warming system using GitHub Actions)
