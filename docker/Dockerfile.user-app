@@ -1,23 +1,32 @@
 FROM node:24-alpine
-
 WORKDIR /usr/src/app
 
-COPY package.json package-lock.json turbo.json tsconfig.json ./
+# 1. FIRST, copy only package files
+COPY package.json package-lock.json turbo.json ./
+# Copy the root tsconfig.json if it exists and is needed for installation
+# If packages have their own, you might not need the root one here.
+# COPY tsconfig.json ./
 
-COPY apps ./apps
-COPY packages ./packages
-
+# 2. Configure npm (optional, for resilience)
 RUN npm config set fetch-retries 5 \
  && npm config set fetch-retry-mintimeout 20000 \
  && npm config set fetch-retry-maxtimeout 120000
 
-
-# Install dependencies
+# 3. Install dependencies (CACHEABLE LAYER)
 RUN npm ci
-# Can you add a script to the global package.json that does this?
-RUN cd packages/db && npx prisma generate && cd ../..
 
-# Can you filter the build down to just one app?
+# 4. Generate Prisma Client EARLY
+# Copy ONLY the Prisma schema needed for generation first
+COPY packages/db/prisma/schema.prisma ./packages/db/prisma/schema.prisma
+RUN cd packages/db && npx prisma generate --schema=./prisma/schema.prisma && cd ../..
+
+# 5. NOW copy the rest of the application code
+COPY apps ./apps
+COPY packages ./packages
+# Copy the rest of the config files needed for build
+COPY tsconfig.json ./
+
+# 6. Build the application
 RUN npm run build
 
 CMD ["npm", "run", "start-user-app"]
