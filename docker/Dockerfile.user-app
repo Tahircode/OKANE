@@ -13,7 +13,7 @@ RUN npm config set fetch-retries 5 \
  && npm config set fetch-retry-maxtimeout 120000
 
 # 3. Install dependencies (CACHEABLE LAYER)
-RUN npm ci
+RUN npm_config_ignore_scripts=true npm ci
 
 # 4. Generate Prisma Client EARLY
 # Copy ONLY the Prisma schema needed for generation first
