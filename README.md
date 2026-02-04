@@ -1,56 +1,74 @@
-OKANE 💳
+# OKANE 💳
 
 A Scalable, Cache-Optimized Digital Wallet & P2P Payment Platform
 
 - OKANE is a full-stack digital wallet and peer-to-peer (P2P) payment application designed with scalability, performance, and financial correctness in mind.
 
-It follows industry-grade backend patterns, uses Redis caching, and is structured as a Turborepo monorepo for clean separation of concerns.
+- The system follows industry-grade backend patterns, leverages Redis caching, and is structured as a Turborepo monorepo to enable clean separation of concerns and independent scalability.
 
-✨ Features
+ ## 📚 Table of Contents
 
-🔐 Authentication & Authorization
+- ✨ Features
+ 
+- 🧠 Architecture Overview
+ 
+- 🔄 High-Level Flow
+
+- 🛠 Tech Stack
+ 
+- 🚀 CI/CD & Automation
+ 
+- ⚙️ Setup & Installation
+ 
+- 🧠 Cache Strategy
+ 
+- ⚠️ Errors & Lessons Learned
+ 
+- 🚀 Future Improvements
+ 
+- 👤 Author
+ 
+- ⭐ Final Note
+ 
+## ✨ Features
+ 
+#### 🔐 Authentication & Authorization
 
 - Google OAuth
+- Credentials-based login using NextAuth
 
-- Credentials (NextAuth)
+#### 💰 Wallet System
 
-💰 Wallet System
-
-- Add money via bank webhook simulation
-
-- Maintain available & locked balances
-
+- Add money via simulated bank webhook
+- Maintain available and locked balances
 - ACID-compliant balance updates
-
-🔁 P2P Transfers
+ 
+#### 🔁 P2P Transfers
 
 - Real-time balance transfers between users
-
 - Row-level locking to prevent race conditions
-
 - Transaction status tracking (Success | Failure | Processing)
+  
+#### ⚡ Redis Caching (Upstash)
 
-⚡ Redis Caching (Upstash)
-
-- Cached balances, transaction history, user profiles
-
-- Cache invalidation on writes
-
+- Cached balances, transaction history, and user profiles
+- Cache invalidation on write operations
 - On-demand cache warming
+- Scheduled cache warm-up using GitHub Actions
 
-- Scheduled cache warm-up via GitHub Actions
+#### 📦 Monorepo Architecture
 
-📦 Monorepo Architecture
+- Shared database & cache layer
+- Clear separation between frontend, backend, and workers
+  
+#### 🐳 Dockerized Setup
 
-Shared database & cache logic
+- Fully Dockerized services
+- Consistent local, staging, and production environments
+  
+#### 🧠 Architecture Overview
 
-Clear separation between frontend, backend, and workers
-
-🐳 Dockerized Setup
-
-Consistent local & production environments
-
-🧠 Architecture Overview
+```text
 OKANE (Turborepo)
 │
 ├── apps/
@@ -62,89 +80,219 @@ OKANE (Turborepo)
 │   └── ui              → Shared UI components
 │
 └── docker-compose.yml
+```
 
-High-level Flow
+## 🔄 High-Level Flow
 
-User App (Next.js)
+#### User App (Next.js)
 
-Handles UI, authentication, server actions
-
-Reads from Redis first, falls back to DB
-
+Handles UI, authentication, and server actions
+Reads from Redis first, falls back to the database
 Database Layer (PostgreSQL + Prisma)
-
 Strong consistency for all financial operations
+Transactions + row-level locking for correctness
 
-Transactions + row locking for correctness
+#### Cache Layer (Upstash Redis)
+ 
+Redis-first architecture for high-frequency reads, Write-through cache invalidation to maintain data correctness, Asynchronous cache warming for hot paths
+Hourly automated cache-warming pipeline powered by GitHub Actions to keep Redis hot and minimize DB pressure
 
-Cache Layer (Upstash Redis)
+#### Bank Webhook Service
+Express.js microservice (bankHook) handles webhook verifications, specialized payment logic and Invalidates Redis cache
 
-Read-heavy data served from Redis
+## 🛠 Tech Stack
 
-Cache invalidated after writes
+<table>
+  <tr>
+    <th>Category</th>
+    <th>Technology</th>
+    <th>Use Case</th>
+  </tr>
 
-Cache warmed asynchronously
+  <!-- Frontend -->
+  <tr>
+    <td rowspan="4" valign="middle"><strong>Frontend</strong></td>
+    <td>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" width="30"/>
+      <a href="https://nextjs.org/"> Next.js</a> (App Router)
+    </td>
+    <td>React Framework</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="30"/>
+      <a href="https://www.typescriptlang.org/"> TypeScript</a>
+    </td>
+    <td>Type-safe JavaScript</td>
+  </tr>
+  <tr>
+    <td>
+     <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg" width="30"/>
+      <a href="https://tailwindcss.com/"> Tailwind CSS</a>
+    </td>
+    <td>Utility-first CSS</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://skillicons.dev/icons?i=react" width="26"/>
+      <a href="https://heroicons.com/"> React Icons</a>
+    </td>
+    <td>UI Icons</td>
+  </tr>
 
-Bank Webhook Service
+  <!-- Backend -->
+  <tr>
+    <td rowspan="4" valign="middle"><strong>Backend</strong></td>
+    <td>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" width="26"/>
+      <a href="https://nodejs.org/"> Node.js</a>
+    </td>
+    <td>JavaScript Runtime</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://skillicons.dev/icons?i=express" width="26"/>
+      <a href="https://expressjs.com/"> Express</a> (bank-webhook)
+    </td>
+    <td>Web Framework</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://authjs.dev/img/logo-sm.png" width="24" />
+      <a href="https://next-auth.js.org/"> NextAuth</a>
+    </td>
+    <td>Authentication</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prisma/prisma-original.svg" width="26"/>
+      <a href="https://www.prisma.io/"> Prisma ORM</a>
+    </td>
+    <td>Database Client & Migrations</td>
+  </tr>
 
-Processes add-money requests
+  <!-- Database & Cache -->
+  <tr>
+    <td rowspan="2" valign="middle"><strong>Database & Cache</strong></td>
+    <td>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="26"/>
+      <a href="https://www.postgresql.org/"> PostgreSQL</a>
+    </td>
+    <td>Primary Database</td>
+  </tr>
+  <tr>
+    <td>
+     <img src="https://skillicons.dev/icons?i=redis" width="26"/>
+      <a href="https://redis.io/"> Redis</a> (Upstash)
+    </td>
+    <td>In-memory Cache</td>
+  </tr>
 
-Updates DB transactionally
+  <!-- DevOps -->
+  <tr>
+    <td rowspan="5" valign="middle"><strong>DevOps & Tooling</strong></td>
+    <td>
+      <img src="https://cdn.simpleicons.org/turborepo/000000" width="26"/>
+      <a href="https://turbo.build/"> Turborepo</a>
+    </td>
+    <td>Monorepo Tooling</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" width="26"/>
+      <a href="https://www.docker.com/"> Docker</a>
+    </td>
+    <td>Containerization</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://skillicons.dev/icons?i=githubactions" width="26"/>
+      <a href="https://github.com/features/actions"> GitHub Actions</a>
+    </td>
+    <td>CI/CD & Automation</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://skillicons.dev/icons?i=vercel" width="26"/>
+      <a href="https://vercel.com/"> Vercel</a> (user-app)
+    </td>
+    <td>Frontend Deployment</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://cdn.simpleicons.org/render/46E3B7" width="26"/>
+      <a href="https://render.com/"> Render</a> (bank-webhook)
+    </td>
+    <td>Backend Deployment</td>
+  </tr>
+</table>
 
-Invalidates Redis cache
 
-🛠 Tech Stack
-Frontend
 
-Next.js (App Router)
+## 🚀 CI/CD & Automation
 
-TypeScript
+- This project uses GitHub Actions to automate build, deployment, and operational workflows.
 
-Tailwind CSS
+#### 🔁 Continuous Integration
 
-Heroicons
+- Validates builds across the monorepo
+- Ensures TypeScript compilation and Prisma client generation
+- Prevents broken code from reaching production
 
-Backend
+#### 🐳 Docker-Based Deployment
 
-Node.js
+- Docker images built for backend services
+- Enables consistent deployments across environments
+- Simplifies local development and cloud deployment
 
-Express (bank-webhook)
+#### ♨️ Redis Cache Warmer (Scheduled Job)
 
-NextAuth (authentication)
+- A scheduled GitHub Actions workflow runs periodically
+- Executes a cache-warming script that:
+  - Preloads balances, profiles, contacts, and transaction history into Redis
+  - Reduces cold-start latency and database load
+- Can also be triggered manually from the GitHub UI
 
-Prisma ORM
+#### 🔐 Secure Configuration
 
-Database & Cache
+- All sensitive values are managed via GitHub Secrets
+No credentials are hard-coded
 
-PostgreSQL
+## ⚙️ Setup & Installation
 
-Redis (Upstash)
+#### Prerequisites:
 
-DevOps & Tooling
+- **Node.js** ≥ 20  
+- **PostgreSQL** ≥ 14  
+- **Redis** ≥ 7  
+- **Docker** *(optional but recommended)*
+  
+#### 1️⃣ Clone the repository
 
-Turborepo
-
-Docker & Docker Compose
-
-GitHub Actions (scheduled cache warmer)
-
-Vercel (user-app)
-
-Render (bank-webhook)
-
-⚙️ Setup & Installation
-1️⃣ Clone the repository
+bash
+```text
 git clone https://github.com/your-username/OKANE.git
 cd OKANE
+```
+#### 2️⃣ Install dependencies
 
-2️⃣ Install dependencies
+bash
+```text
 npm install
+```
 
-3️⃣ Environment Variables
+#### 3️⃣ Environment Variables
+- Each service uses its own environment file.
+- setup environment variables
+1. create .env file for user-app
+- bash
+```text
+cd apps/user-app
+touch .env.local
+```
 
-Each service requires its own environment variables.
-
-apps/user-app/.env.local
+- create
+```text
 DATABASE_URL=
 NEXTAUTH_SECRET=
 NEXTAUTH_URL=http://localhost:3000
@@ -154,89 +302,88 @@ GOOGLE_CLIENT_SECRET=
 
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
-
-apps/bank-webhook/.env
+```
+2. create .env file for bank-webhook
+```text
+cd ../../apps/bank-webhook
+touch .env
+```
+- create
+```text
 DATABASE_URL=
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
-
-packages/db/.env
+```
+3. create .env file packages/db
+```text
+cd ../../packages/db
+touch .env
+```
+- create
+```text
 DATABASE_URL=
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
+```
 
-4️⃣ Database setup
+#### 4️⃣ Database setup
+
+bash
+```text
 npm run db:generate
 npm run db:migrate
+```
 
 5️⃣ Run locally
+
+bash
+```text
+cd ../../
 npm run dev
+```
+
+User App → http://localhost:3000
+
+Bank Webhook → http://localhost:3004
 
 
-User app → http://localhost:3000
 
-Bank webhook → http://localhost:3004
+## 🧠 Cache Strategy
 
-🧪 Cache Strategy
+- Read-first from Redis
+- Write-through to PostgreSQL
+- Cache invalidation on mutation
+- On-demand cache warming
+- Scheduled cache warming via GitHub Actions
+  
+#### Benefits:
 
-Read-first from Redis
+- Reduced database load
+- Lower latency
+- Faster cold starts
+- Fewer expensive joins on hot paths
+  
+## ⚠️ Errors & Lessons Learned
+- Resolved Prisma transaction timeouts (P2028) by reducing transaction scope.
+- Prevented race conditions using SELECT … FOR UPDATE.
+- Ensured Redis failures never block core database operations.
+- Fixed monorepo deployment issues with proper package exports.
+- Solved Vercel workspace resolution for shared packages.
+  
+## 🚀 Future Improvements
+- Idempotent webhook processing
+- WebSockets for real-time balance updates
+- Distributed locks for multi-instance writes
+- Rate limiting & fraud detection
+- Observability (metrics + tracing)
+- Dedicated background workers for heavy cache operations
+  
+## 👤 Author
+- Tahir Aziz Khan
+  - Final-year Engineer | Backend & Full-Stack Developer
+  - Focused on scalable systems, caching strategies, and financial correctness.
 
-Write-through to DB
+## ⭐ Final Note
+- This project is intentionally designed to reflect real-world backend engineering decisions, not just CRUD functionality.
 
-Cache invalidation on mutation
-
-On-demand cache warm-up
-
-Scheduled warm-up (GitHub Actions)
-
-This reduces:
-
-DB load
-
-Cold-start latency
-
-Expensive joins on frequent reads
-
-⚠️ Errors & Lessons Learned
-
-Handled Prisma transaction timeouts (P2028) by reducing transaction scope
-
-Avoided race conditions using SELECT … FOR UPDATE
-
-Ensured Redis failures do not block core DB operations
-
-Fixed monorepo deployment issues using proper package exports
-
-Solved Vercel workspace resolution for shared packages
-
-🚀 Future Improvements
-
-Idempotent webhook processing
-
-WebSockets for real-time balance updates
-
-Distributed locks for multi-instance writes
-
-Rate limiting & fraud detection
-
-Observability (metrics + tracing)
-
-Background workers for heavy cache operations
-
-📸 Screenshots / Diagrams
-
-(You can add architecture diagrams or UI screenshots here later)
-
-👤 Author
-
-Tahir Aziz Khan
-Final-year Engineer | Backend & Full-Stack Developer
-Focused on scalable systems, caching strategies, and financial correctness
-
-⭐ Final Note
-
-This project is intentionally designed to reflect real-world backend engineering decisions, not just CRUD functionality.
-
-If you’re reviewing this as a recruiter or engineer:
-
-The emphasis is on correctness, performance, and architecture, not just features.
+- The emphasis is on correctness, performance, and architecture, not just features.
