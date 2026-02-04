@@ -2,6 +2,9 @@
 FROM node:24-alpine AS base
 WORKDIR /usr/src/app
 
+# ✅ Dummy value ONLY for Prisma schema validation
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/dummy"
+
 # 1. Copy package files FIRST (for better caching)
 COPY package*.json ./
 COPY turbo.json ./

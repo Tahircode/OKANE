@@ -26,8 +26,6 @@ jobs:
         file: docker/Dockerfile.user-app
         push: true
         tags: tahirkhan01/okane:latest
-        build-args: |
-          DATABASE_URL=postgresql://dummy:dummy@dummy:5432/dummy
     
     - name: Verify Pushed Image
       run: docker pull tahirkhan01/okane:latest
