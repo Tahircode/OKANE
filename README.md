@@ -6,6 +6,8 @@ A Scalable, Cache-Optimized Digital Wallet & P2P Payment Platform
 
 - The system follows industry-grade backend patterns, leverages Redis caching, and is structured as a Turborepo monorepo to enable clean separation of concerns and independent scalability.
 
+---
+
  ## 📚 Table of Contents
 
 - ✨ Features
@@ -29,6 +31,7 @@ A Scalable, Cache-Optimized Digital Wallet & P2P Payment Platform
 - 👤 Author
  
 - ⭐ Final Note
+---
  
 ## ✨ Features
  
@@ -65,8 +68,9 @@ A Scalable, Cache-Optimized Digital Wallet & P2P Payment Platform
 
 - Fully Dockerized services
 - Consistent local, staging, and production environments
+---
   
-#### 🧠 Architecture Overview
+## 🧠 Architecture Overview
 
 ```text
 OKANE (Turborepo)
@@ -81,7 +85,7 @@ OKANE (Turborepo)
 │
 └── docker-compose.yml
 ```
-
+---
 ## 🔄 High-Level Flow
 
 #### User App (Next.js)
@@ -99,6 +103,7 @@ Hourly automated cache-warming pipeline powered by GitHub Actions to keep Redis 
 
 #### Bank Webhook Service
 Express.js microservice (bankHook) handles webhook verifications, specialized payment logic and Invalidates Redis cache
+---
 
 ## 🛠 Tech Stack
 
@@ -227,7 +232,7 @@ Express.js microservice (bankHook) handles webhook verifications, specialized pa
   </tr>
 </table>
 
-
+---
 
 ## 🚀 CI/CD & Automation
 
@@ -257,6 +262,8 @@ Express.js microservice (bankHook) handles webhook verifications, specialized pa
 
 - All sensitive values are managed via GitHub Secrets
 No credentials are hard-coded
+
+---
 
 ## ⚙️ Setup & Installation
 
@@ -346,7 +353,7 @@ User App → http://localhost:3000
 
 Bank Webhook → http://localhost:3004
 
-
+---
 
 ## 🧠 Cache Strategy
 
@@ -362,6 +369,7 @@ Bank Webhook → http://localhost:3004
 - Lower latency
 - Faster cold starts
 - Fewer expensive joins on hot paths
+---
   
 ## ⚠️ Errors & Lessons Learned
 - Resolved Prisma transaction timeouts (P2028) by reducing transaction scope.
@@ -369,6 +377,7 @@ Bank Webhook → http://localhost:3004
 - Ensured Redis failures never block core database operations.
 - Fixed monorepo deployment issues with proper package exports.
 - Solved Vercel workspace resolution for shared packages.
+---
   
 ## 🚀 Future Improvements
 - Idempotent webhook processing
@@ -377,12 +386,13 @@ Bank Webhook → http://localhost:3004
 - Rate limiting & fraud detection
 - Observability (metrics + tracing)
 - Dedicated background workers for heavy cache operations
+---
   
 ## 👤 Author
 - Tahir Aziz Khan
   - Final-year Engineer | Backend & Full-Stack Developer
   - Focused on scalable systems, caching strategies, and financial correctness.
-
+---
 ## ⭐ Final Note
 - This project is intentionally designed to reflect real-world backend engineering decisions, not just CRUD functionality.
 
