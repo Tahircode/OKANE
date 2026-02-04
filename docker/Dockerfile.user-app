@@ -5,22 +5,25 @@ WORKDIR /usr/src/app
 # ✅ Dummy value ONLY for Prisma schema validation
 ENV DATABASE_URL="postgresql://user:pass@localhost:5432/dummy"
 
-# 1. Copy package files FIRST (for better caching)
-COPY package*.json ./
+# 1️⃣ Copy root manifests
+COPY package.json package-lock.json ./
 COPY turbo.json ./
 
-# 2. Skip postinstall scripts during npm install
+# 2️⃣ Copy ONLY workspace package.json files
+COPY packages/*/package.json packages/*/package.json
+COPY apps/*/package.json apps/*/package.json
+
+# 3️⃣ Install dependencies (workspace-aware)
 RUN npm_config_ignore_scripts=true npm ci
 
-# 3. Copy Prisma schema and generate client
-COPY packages/db/prisma/schema.prisma ./packages/db/prisma/schema.prisma
+# 4️⃣ Copy full source code
+COPY packages ./packages
+COPY apps ./apps
+
+# 5️⃣ Generate Prisma client
 RUN npx prisma generate --schema=packages/db/prisma/schema.prisma
 
-# 4. NOW copy the rest of the code
-COPY apps ./apps
-COPY packages ./packages
-
-# 5. Build the application
+# 6️⃣ Build monorepo
 RUN npm run build
 
 # ---- Application Targets ----
