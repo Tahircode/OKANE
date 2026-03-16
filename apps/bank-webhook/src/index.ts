@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: ["http://localhost:3001", "https://okane.vercel.app"],
+  origin: ["http://localhost:3001", "https://okane.vercel.app", "https://okane1.netlify.app"],
   methods: ["GET", "POST"],
 }
 ))
@@ -111,8 +111,6 @@ app.post("/hdfcwebhook", async (req, res) => {
       error: e instanceof Error ? e.message : "Internal server error",
     });
   }
-
-
 });
 
 app.listen(3004, () => {
