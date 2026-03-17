@@ -3,7 +3,7 @@ import db from "../db";
 const redis = getRedisClient();
 export interface Contacts  {
   id: string;
-  name: string | null;
+  name: string  | null;
   phone: string | null;
   email: string | null;
   image: string | null;

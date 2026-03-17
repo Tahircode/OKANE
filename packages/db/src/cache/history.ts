@@ -23,11 +23,10 @@ export interface onRampInterface {
   userId : string
 }
 
-
 //recent transations for current user
 export async function getonRampHistory(userId: string, count: number = 25): Promise<onRampInterface[]> {
   const cachedKey = `onRampHistory:${userId}`;
-  
+    console.log("here it is", cachedKey);
   try {
     // 1. Try to get from cache first
     const cachedHistory = await redis.lrange(cachedKey, 0, count - 1);
