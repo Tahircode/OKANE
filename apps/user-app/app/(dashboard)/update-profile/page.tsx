@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { updateProfileAction } from "../../lib/auth/update";
 import Link from "next/link";
+
 const SubmitButton = () => {
   const { pending } = useFormStatus();
   return (

@@ -6,10 +6,8 @@ import { signIn } from "next-auth/react";
 import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-
 import { initialState, FormState } from "../../lib/types/form";
 import { signUpAction } from "../../lib/auth/signup"
-
 
 const SubmitButton = () => {
 
@@ -36,7 +34,6 @@ export default function SignUpPage() {
 
   useEffect(() => {
     if (state.success && state.credentials) {
-
 
       signIn("credentials",
         {

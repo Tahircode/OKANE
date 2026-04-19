@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { 
   ArrowTrendingUpIcon, 
   BanknotesIcon,
   CreditCardIcon,
-  SparklesIcon,
-  FireIcon,
   ClockIcon,
   TicketIcon,
   AcademicCapIcon,
@@ -19,36 +17,17 @@ import {
 } from "@heroicons/react/24/outline";
 
 export default function Dashboard() {
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
-  const [greeting, setGreeting] = useState("");
-  const [mounted, setMounted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const {data : session} = useSession();
-  const [name, setName] = useState("User!");
 
-   useEffect(()=>{
-      if(session?.user?.name){
-        setName(session.user.name);
-      }
-   },[session]);
-  useEffect(() => {
-    setMounted(true);
-    setCurrentTime(new Date());
-    
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+  const name = session?.user?.name ?? "User!";
 
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    if (currentTime) {
-      const hour = currentTime.getHours();
-      if (hour < 12) setGreeting("Good morning");
-      else if (hour < 18) setGreeting("Good afternoon");
-      else setGreeting("Good evening");
-    }
-  }, [currentTime]);
+  const greeting = useMemo(() => {
+  const hour = currentTime.getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+}, [currentTime]);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("en-US", { 
@@ -67,7 +46,7 @@ export default function Dashboard() {
   };
 
 
-  if (!mounted || !currentTime) {
+  if (!currentTime) {
     return (
       <div className="min-h-screen w-full flex flex-col items-center justify-start pt-24 pb-16 px-4 sm:px-8 ">
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
@@ -100,6 +79,64 @@ export default function Dashboard() {
     );
   }
 
+  const stats = [
+  {
+    title: "Wallet Balance",
+    value: "check wallet",
+    change: "12% from last month",
+    icon: BanknotesIcon,
+    color: "from-blue-500 to-blue-600",
+    textColor: "text-blue-100",
+  },
+  {
+    title: "Monthly Savings",
+    value: "coming soon",
+    change: "8% from last month",
+    icon: CreditCardIcon,
+    color: "from-green-500 to-green-600",
+    textColor: "text-green-100",
+  },
+  {
+    title: "Rewards Points",
+    value: "you will get rewarded",
+    change: "Redeem now",
+    icon: GiftIcon,
+    color: "from-purple-500 to-purple-600",
+    textColor: "text-purple-100",
+  },
+  {
+    title: "Active Offers",
+    value: "12",
+    change: "Expiring soon",
+    icon: TicketIcon,
+    color: "from-orange-500 to-orange-600",
+    textColor: "text-orange-100",
+  },
+];
+const StatCard = ({ title, value, change, icon: Icon, color, textColor }: any) => {
+  return (
+    <div className={`bg-gradient-to-r ${color} rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-xl`}>
+      <div className="flex items-center justify-between">
+        <div className="min-w-0 flex-1">
+          <p className={`text-xs sm:text-sm ${textColor} font-medium truncate`}>
+            {title}
+          </p>
+          <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">
+            {value}
+          </p>
+          <div className="flex items-center mt-1 sm:mt-2">
+            <ArrowTrendingUpIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
+            <span className="text-xs sm:text-sm truncate">{change}</span>
+          </div>
+        </div>
+        <div className="flex-shrink-0 bg-white/20 p-2 sm:p-3 rounded-lg ml-2 sm:ml-4">
+          <Icon className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-white" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
   return (
     <div className="min-h-screen ">
       <div className="w-full max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
@@ -121,70 +158,10 @@ export default function Dashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-xl">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0 flex-1">
-                <p className="text-xs sm:text-sm text-blue-100 font-medium truncate">Wallet Balance</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">check wallet</p>
-                <div className="flex items-center mt-1 sm:mt-2">
-                  <ArrowTrendingUpIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm truncate">12% from last month</span>
-                </div>
-              </div>
-              <div className="flex-shrink-0 bg-white/20 p-2 sm:p-3 rounded-lg ml-2 sm:ml-4">
-                <BanknotesIcon className="h-5 w-5 sm:h-6 sm:w-6 sm:h-8 sm:w-8 text-white" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-xl">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0 flex-1">
-                <p className="text-xs sm:text-sm text-green-100 font-medium truncate">Monthly Savings</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">coming soon</p>
-                <div className="flex items-center mt-1 sm:mt-2">
-                  <ArrowTrendingUpIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm truncate">8% from last month</span>
-                </div>
-              </div>
-              <div className="flex-shrink-0 bg-white/20 p-2 sm:p-3 rounded-lg ml-2 sm:ml-4">
-                <CreditCardIcon className="h-5 w-5 sm:h-6 sm:w-6 sm:h-8 sm:w-8 text-white" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-xl">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0 flex-1">
-                <p className="text-xs sm:text-sm text-purple-100 font-medium truncate">Rewards Points</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">you will get rewarded</p>
-                <div className="flex items-center mt-1 sm:mt-2">
-                  <SparklesIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm truncate">Redeem now</span>
-                </div>
-              </div>
-              <div className="flex-shrink-0 bg-white/20 p-2 sm:p-3 rounded-lg ml-2 sm:ml-4">
-                <GiftIcon className="h-5 w-5 sm:h-6 sm:w-6 sm:h-8 sm:w-8 text-white" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-xl">
-            <div className="flex items-center justify-between">
-              <div className="min-w-0 flex-1">
-                <p className="text-xs sm:text-sm text-orange-100 font-medium truncate">Active Offers</p>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mt-1 truncate">12</p>
-                <div className="flex items-center mt-1 sm:mt-2">
-                  <FireIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm truncate">Expiring soon</span>
-                </div>
-              </div>
-              <div className="flex-shrink-0 bg-white/20 p-2 sm:p-3 rounded-lg ml-2 sm:ml-4">
-                <TicketIcon className="h-5 w-5 sm:h-6 sm:w-6 sm:h-8 sm:w-8 text-white" />
-              </div>
-            </div>
-          </div>
-        </div>
+  {stats.map((stat, index) => (
+    <StatCard key={index} {...stat} />
+  ))}
+</div>
 
         {/* Quick Actions */}
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6 mb-6 sm:mb-8">

@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useMemo} from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { SendCard } from "../../../components/SendCard";
 import { Toast } from "../../lib/actions/Toast";
 import type { User } from "../../lib/types/user";
@@ -21,10 +22,7 @@ export default function P2PPage() {
   const { data: session } = useSession();
   const [isSelecting, setIsSelecting] = useState(false);
   const [isTransferring, setIsTransferring] = useState(false);
-
-  const [contacts, setContacts] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [contacts, setContacts] = useState<User[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedContact, setSelectedContact] = useState<User | null>(null);
@@ -32,34 +30,26 @@ export default function P2PPage() {
   // Audio context for sound effects
   const audioContextRef = useRef<AudioContext | null>(null);
 
-  // get contacts 
-  const fetchContacts = useCallback(async () => {
-    if (!session?.user?.id) return;
-    try {
-      setLoading(true);
-      const res = await fetch("/api/contacts");
+  const queryClient = useQueryClient();
+  
+  const fetchContacts = async () => {
+  const res = await fetch("/api/contacts");
+  if (!res.ok) throw new Error("Failed to fetch contacts");
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch contacts");
-      }
-      const data = await res.json();
+  const data = await res.json();
+  return Array.isArray(data)
+    ? data.filter(contact => contact && contact.id)
+    : [];
+};
 
-      const validContacts = Array.isArray(data) 
-      ? data.filter(contact => contact && contact.id) 
-      : [];
-      setContacts(validContacts);
-      setFilteredUsers(validContacts);
-    } catch (error) {
-      console.error("Error fetching contacts:", error);
-      setToast({ message: "Could not load contacts.", type: "error" });
-    } finally {
-      setLoading(false);
-    }
-  }, [session?.user]);
+const { data: contacts = [], isLoading, error } = useQuery({
+  queryKey: ["contacts", session?.user?.id],
+  queryFn: fetchContacts,
+  enabled: !!session?.user?.id,
+  refetchOnWindowFocus: false,
+});
 
-  useEffect(() => {
-    fetchContacts();
-  }, [fetchContacts])
+// const filteredUsers = useMemo(() => contacts, [contacts]);
 
 
   // Initialize audio context
@@ -104,19 +94,15 @@ audioContextRef.current = new (
     setToast({ message, type });
   };
 
-  useEffect(() => {
-    // Filter users based on search term
-    if (searchTerm.trim() === "") {
-      setFilteredUsers(contacts);
-    } else {
-      const filtered = contacts.filter(contact =>
-        contact.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        contact.phone?.includes(searchTerm) ||
-        contact.email?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredUsers(filtered);
-    }
-  }, [searchTerm, contacts]);
+ const filteredUsers = useMemo(() => {
+  if (!searchTerm.trim()) return contacts;
+
+  return contacts.filter(contact =>
+    contact.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    contact.phone?.includes(searchTerm) ||
+    contact.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+}, [contacts, searchTerm]);
 
   const phoneFn = async (
     recipient: User,
@@ -137,27 +123,25 @@ audioContextRef.current = new (
   };
 
   const refreshUsers = async () => {
-    try {
-      setRefreshing(true);
-      // Just call the fetch function again to get fresh data
-      await fetchContacts();
-      showToast("Contacts refreshed", "success");
-    } catch (error) {
-      console.error(error);
-      showToast("Failed to refresh contacts", "error");
-    } finally {
-      setRefreshing(false);
+    try{
+       setRefreshing(true);
+    await queryClient.invalidateQueries({
+        queryKey: ["contacts", session?.user?.id],
+    });
+    showToast("Contacts refreshed", "success");
+  } catch (error) {
+    showToast("Failed to refresh contacts", "error");
+  } finally {
+    setRefreshing(false);   
     }
   };
 
   // function to refresh contacts silently without showing a toast
   const silentRefreshUsers = async () => {
-    if (!contacts) if (!contacts) {
-      showToast("failed to get contacts", "error");
-      return;
-    }
-    setContacts(contacts);
-  };
+  await queryClient.invalidateQueries({
+      queryKey: ["contacts", session?.user?.id],
+  });
+};
 
   // Calculate statistics
   const totalContacts = contacts.length;
@@ -296,7 +280,7 @@ audioContextRef.current = new (
 
               {/* Contact List */}
               <div className=" md:p-4 sm:p-6 pt-2 max-h-80 sm:max-h-96 overflow-y-auto space-y-2">
-                {loading ? (
+                {isLoading ? (
                   <div className="flex flex-col justify-center items-center h-32">
                     <div className="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 border-b-2 border-indigo-600 mb-2 sm:mb-4"></div>
                     <p className="text-gray-500 text-xs sm:text-sm">Loading contacts...</p>

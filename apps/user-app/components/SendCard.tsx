@@ -187,7 +187,6 @@ export function SendCard({
                   </div>
                 </div>
               </div>
-
               {/* Clear Button */}
               <button
                 onClick={handleClearContact}
@@ -199,7 +198,6 @@ export function SendCard({
             </div>
           </div>
         )}
-
         {/* Input Fields */}
         <div className="space-y-4">
           {/* Recipient Number */}
