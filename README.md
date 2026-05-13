@@ -1,56 +1,47 @@
-OKANE 💳
+## OKANE 💳
 
 A Scalable, Cache-Optimized Digital Wallet & P2P Payment Platform
 
-- OKANE is a full-stack digital wallet and peer-to-peer (P2P) payment application designed with scalability, performance, and financial correctness in mind.
+OKANE is a full-stack digital wallet and peer-to-peer (P2P) payment application designed with scalability, performance, and financial correctness in mind.
 
 It follows industry-grade backend patterns, uses Redis caching, and is structured as a Turborepo monorepo for clean separation of concerns.
 
-✨ Features
+## ✨ Features
 
-🔐 Authentication & Authorization
+### 🔐 Authentication & Authorization
 
-- Google OAuth
+1. Google OAuth
+2. Credentials (NextAuth)
 
-- Credentials (NextAuth)
+### 💰 Wallet System
 
-💰 Wallet System
+1. Add money via bank webhook simulation
+2. Maintain available & locked balances
+3. ACID-compliant balance updates
 
-- Add money via bank webhook simulation
+### 🔁 P2P Transfers
 
-- Maintain available & locked balances
+1. Real-time balance transfers between users
+2. Row-level locking to prevent race conditions
+3. Transaction status tracking (Success | Failure | Processing)
 
-- ACID-compliant balance updates
+### ⚡ Redis Caching (Upstash)
+1. Cached balances, transaction history, user profiles
+2. Cache invalidation on writes
+3. On-demand cache warming
+4. Scheduled cache warm-up via GitHub Actions
 
-🔁 P2P Transfers
+### 📦 Monorepo Architecture
 
-- Real-time balance transfers between users
+1. Shared database & cache logic
+2. Clear separation between frontend, backend, and workers
 
-- Row-level locking to prevent race conditions
-
-- Transaction status tracking (Success | Failure | Processing)
-
-⚡ Redis Caching (Upstash)
-
-- Cached balances, transaction history, user profiles
-
-- Cache invalidation on writes
-
-- On-demand cache warming
-
-- Scheduled cache warm-up via GitHub Actions
-
-📦 Monorepo Architecture
-
-Shared database & cache logic
-
-Clear separation between frontend, backend, and workers
-
-🐳 Dockerized Setup
+### 🐳 Dockerized Setup
 
 Consistent local & production environments
 
-🧠 Architecture Overview
+### 🧠 Architecture Overview
+```
 OKANE (Turborepo)
 │
 ├── apps/
@@ -62,89 +53,80 @@ OKANE (Turborepo)
 │   └── ui              → Shared UI components
 │
 └── docker-compose.yml
+```
 
-High-level Flow
+**High-level Flow**
 
-User App (Next.js)
+### User App (Next.js)
 
-Handles UI, authentication, server actions
+1. Handles UI, authentication, server actions
+2. Reads from Redis first, falls back to DB
 
-Reads from Redis first, falls back to DB
+### Database Layer (PostgreSQL + Prisma)
 
-Database Layer (PostgreSQL + Prisma)
+1. Strong consistency for all financial operations
+2. Transactions + row locking for correctness
 
-Strong consistency for all financial operations
+### Cache Layer (Upstash Redis)
+1. Read-heavy data served from Redis
+2. Cache invalidated after writes
+3. Cache warmed asynchronously
 
-Transactions + row locking for correctness
+### Bank Webhook Service
+1. Processes add-money requests ( using token based authentication)
+2. Updates DB transactionally
+3. Invalidates Redis cache
 
-Cache Layer (Upstash Redis)
+## 🛠 Tech Stack
 
-Read-heavy data served from Redis
+### Frontend
+1. Next.js (App Router)
+2. TypeScript
+3. Tailwind CSS
+4. Heroicons
 
-Cache invalidated after writes
+### Backend
+1. Node.js
+2. Express (bank-webhook)
+3. NextAuth (authentication)
 
-Cache warmed asynchronously
+### Prisma ORM
 
-Bank Webhook Service
+1. Database & Cache
+2. PostgreSQL
 
-Processes add-money requests
+### Redis (Upstash)
 
-Updates DB transactionally
+### DevOps & Tooling
+1. Turborepo
+2. Docker & Docker Compose
+2. GitHub Actions (scheduled cache warmer)
 
-Invalidates Redis cache
+### Deployment
 
-🛠 Tech Stack
-Frontend
+1. Vercel (user-app)
+2. Render (bank-webhook)
 
-Next.js (App Router)
+## ⚙️ Setup & Installation
 
-TypeScript
-
-Tailwind CSS
-
-Heroicons
-
-Backend
-
-Node.js
-
-Express (bank-webhook)
-
-NextAuth (authentication)
-
-Prisma ORM
-
-Database & Cache
-
-PostgreSQL
-
-Redis (Upstash)
-
-DevOps & Tooling
-
-Turborepo
-
-Docker & Docker Compose
-
-GitHub Actions (scheduled cache warmer)
-
-Vercel (user-app)
-
-Render (bank-webhook)
-
-⚙️ Setup & Installation
-1️⃣ Clone the repository
+### 1. Clone the repository
+```
 git clone https://github.com/your-username/OKANE.git
 cd OKANE
-
-2️⃣ Install dependencies
+```
+### 2. Install dependencies
+```
 npm install
+```
 
-3️⃣ Environment Variables
+### 3. Environment Variables
 
 Each service requires its own environment variables.
-
-apps/user-app/.env.local
+```
+cd apps/user-app/.env.local
+```
+add these env variables
+```
 DATABASE_URL=
 NEXTAUTH_SECRET=
 NEXTAUTH_URL=http://localhost:3000
@@ -154,8 +136,11 @@ GOOGLE_CLIENT_SECRET=
 
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
-
-apps/bank-webhook/.env
+```
+```
+cd apps/bank-webhook/.env
+```
+```
 DATABASE_URL=
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
@@ -164,76 +149,64 @@ packages/db/.env
 DATABASE_URL=
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
+```
 
-4️⃣ Database setup
+### 4. Database setup
+```
 npm run db:generate
 npm run db:migrate
+```
 
-5️⃣ Run locally
+### 5. Run locally
+```
 npm run dev
-
+```
 
 User app → http://localhost:3000
 
 Bank webhook → http://localhost:3004
 
-🧪 Cache Strategy
+## 🧪 Cache Strategy
+1. Read-first from Redis
+2. Write-through to DB
+3. Cache invalidation on mutation
+4. On-demand cache warm-up
+5. Scheduled warm-up (GitHub Actions)
 
-Read-first from Redis
+### This reduces:
+1. DB load
+2. Cold-start latency
+3. Expensive joins on frequent reads
 
-Write-through to DB
+### ⚠️ Errors & Lessons Learned
 
-Cache invalidation on mutation
+1. Handled Prisma transaction timeouts (P2028) by reducing transaction scope
+2. Avoided race conditions using SELECT … FOR UPDATE
+3. Ensured Redis failures do not block core DB operations
+4. Fixed monorepo deployment issues using proper package exports
+5. Solved Vercel workspace resolution for shared packages
 
-On-demand cache warm-up
+## 🚀 Future Improvements
+1. Idempotent webhook processing
+2. WebSockets for real-time balance updates
+3. Distributed locks for multi-instance writes
+4. Rate limiting & fraud detection
+5. Observability (metrics + tracing)
+6. Background workers for heavy cache operations
 
-Scheduled warm-up (GitHub Actions)
+## 📸 Screenshots / Diagrams
 
-This reduces:
 
-DB load
 
-Cold-start latency
-
-Expensive joins on frequent reads
-
-⚠️ Errors & Lessons Learned
-
-Handled Prisma transaction timeouts (P2028) by reducing transaction scope
-
-Avoided race conditions using SELECT … FOR UPDATE
-
-Ensured Redis failures do not block core DB operations
-
-Fixed monorepo deployment issues using proper package exports
-
-Solved Vercel workspace resolution for shared packages
-
-🚀 Future Improvements
-
-Idempotent webhook processing
-
-WebSockets for real-time balance updates
-
-Distributed locks for multi-instance writes
-
-Rate limiting & fraud detection
-
-Observability (metrics + tracing)
-
-Background workers for heavy cache operations
-
-📸 Screenshots / Diagrams
-
-(You can add architecture diagrams or UI screenshots here later)
-
-👤 Author
+## 👤 Author
 
 Tahir Aziz Khan
+
 Final-year Engineer | Backend & Full-Stack Developer
+
 Focused on scalable systems, caching strategies, and financial correctness
 
-⭐ Final Note
+## ⭐ Final Note
 
 This project is intentionally designed to reflect real-world backend engineering decisions, not just CRUD functionality.
 
